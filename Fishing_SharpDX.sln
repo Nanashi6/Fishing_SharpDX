@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fishing_SharpDX", "Fishing_SharpDX.csproj", "{98A38AAF-3916-4D3F-8B96-C3DB3854878A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98A38AAF-3916-4D3F-8B96-C3DB3854878A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98A38AAF-3916-4D3F-8B96-C3DB3854878A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98A38AAF-3916-4D3F-8B96-C3DB3854878A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98A38AAF-3916-4D3F-8B96-C3DB3854878A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {330D6E16-9653-4D53-8298-166FB2DBCEF9}
+	EndGlobalSection
+EndGlobal
