@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpDX.DXGI;
+using Plane = Fishing_SharpDX.Objects.Nature.Plane;
+using Fishing_SharpDX.Objects.Nature;
 
 namespace Fishing_SharpDX
 {
@@ -27,13 +29,19 @@ namespace Fishing_SharpDX
 
         #region Objects
 
-        
+        Plane _ground;
+        Plane _water;
+        Rock _rock1;
+        Tree _tree1;
 
         #endregion
 
-        #region Material
+        #region Materials
 
-        
+        Material _groundMaterial;
+        Material _waterMaterial;
+        Material _rockMaterial;
+        Material _treeMaterial;
 
         #endregion
 
@@ -43,13 +51,11 @@ namespace Fishing_SharpDX
 
         #endregion
 
-        #region Light
+        #region Lights
 
         Illumination _illumination;
 
-        LightSource _spot1;
-        LightSource _spot2;
-        LightSource _spot3;
+        LightSource _directionalLight;
 
         #endregion
 
@@ -79,24 +85,53 @@ namespace Fishing_SharpDX
             _renderer = new Renderer(_directX3DGraphics);
             _renderer.CreateConstantBuffers();
 
-            _camera = new Camera(new Vector4(0.0f, 0.0f, -10.0f, 1.0f));
+            _camera = new Camera(new Vector4(0.0f, 2.0f, -10.0f, 1.0f));
 
-            _spot1 = new LightSource();
-            _spot2 = new LightSource();
-            _spot2.Color = new Vector4(0f, 0f, 1f, 1f);
-            _spot2.Direction = new Vector4(1f, 0f, 0f, 1f);
-            _spot2.Position = new Vector4(-2f, 0f, 0f, 1f);
-            _spot3 = new LightSource();
-            _spot3.Color = new Vector4(0f, 1f, 0f, 1f);
-            _spot3.Direction = new Vector4(0f, -1f, 0f, 1f);
-            _spot3.Position = new Vector4(0f, 2f, 0f, 1f);
-            _spot3.SpotAngle = (float)Math.PI / 6.0f;
-            _spot3.LightSourceType = 2;
+            _directionalLight = new LightSource();
+            _directionalLight.Color = new Vector4(0f, 1f, 1f, 1f);
+            _directionalLight.Direction = new Vector4(0f, -1f, 0f, 1f);
+            _directionalLight.Position = new Vector4(0f, 2f, 0f, 1f);
+            /*_directionalLight.SpotAngle = (float)Math.PI / 6.0f;*/
+            _directionalLight.LightSourceType = (int)LightSource.LightType.DirectionalLight;
 
             _illumination = new Illumination(_camera.Position,
                                             new Vector4(0.3f, 0.3f, 0.3f, 1f),
-                                            new LightSource[] { _spot1, _spot2, _spot3 }
+                                            new LightSource[] { _directionalLight }
                                             );
+
+            Texture groundTex = LoadTextureFromFile("Textures/ground.jpg", _renderer.AnisotropicSampler);
+            _groundMaterial = new Material("GroundMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
+                32f, true, groundTex);
+            _ground = new Plane("Ground", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 0f, 1f), _groundMaterial, 10);
+
+            Texture waterTex = LoadTextureFromFile("Textures/water.jpg", _renderer.AnisotropicSampler);
+            _waterMaterial = new Material("WaterMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                32f, true, waterTex);
+            _water = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 20f, 1f), _waterMaterial, 10);
+
+            _rockMaterial = new Material("RockMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                32f, false, waterTex);
+            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(0, 0.25f, 0, 1), _rockMaterial);
+
+            _treeMaterial = new Material("TreeMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                32f, false, waterTex);
+            _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
@@ -115,6 +150,9 @@ namespace Fishing_SharpDX
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
 
             _input.Update();
+            _camera.Yaw += _input.GetMouseDeltaX() * 0.01f;
+            _camera.Pitch += _input.GetMouseDeltaY() * 0.01f;
+
             KeyUpdate();
 
             Matrix viewMatrix = _camera.GetViewMatrix();
@@ -122,6 +160,13 @@ namespace Fishing_SharpDX
             _renderer.BeginRender();
 
             _illumination.EyePosition = _camera.Position;
+            _renderer.UpdateIlluminationProperties(_illumination);
+
+            _ground.Render(viewMatrix, projectionMatrix);
+            _water.Render(viewMatrix, projectionMatrix);
+
+            _rock1.Render(viewMatrix, projectionMatrix);
+            _tree1.Render(viewMatrix, projectionMatrix);
 
             _renderer.EndRender();
         }
