@@ -9,6 +9,12 @@ using Buffer11 = SharpDX.Direct3D11.Buffer;
 
 namespace Fishing_SharpDX.Objects
 {
+    public struct BoundingBox
+    {
+        public Vector3 Min;
+        public Vector3 Max;
+    }
+
     public class MeshObject : PositionalObject, IDisposable
     {
         [StructLayout(LayoutKind.Sequential)]
@@ -98,6 +104,43 @@ namespace Fishing_SharpDX.Objects
             deviceContext.InputAssembler.SetVertexBuffers(0, _vertexBufferBinding);
             deviceContext.InputAssembler.SetIndexBuffer(_indexBufferObject, Format.R32_UInt, 0);
             deviceContext.DrawIndexed(_indexesCount, 0, 0);
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            // Инициализация начальных значений максимальных и минимальных координат
+            float maxX = float.MinValue;
+            float maxY = float.MinValue;
+            float maxZ = float.MinValue;
+            float minX = float.MaxValue;
+            float minY = float.MaxValue;
+            float minZ = float.MaxValue;
+
+            // Проход по всем объектам в списке и сравнение координат
+            foreach (var vertex in _vertices)
+            {
+                // Нахождение максимальных координат
+                maxX = Math.Max(maxX, vertex.position.X);
+                maxY = Math.Max(maxY, vertex.position.Y);
+                maxZ = Math.Max(maxZ, vertex.position.Z);
+
+                // Нахождение минимальных координат
+                minX = Math.Min(minX, vertex.position.X);
+                minY = Math.Min(minY, vertex.position.Y);
+                minZ = Math.Min(minZ, vertex.position.Z);
+            }
+
+            // Вывод результатов
+            /*Console.WriteLine("Максимальные координаты:");
+            Console.WriteLine($"X: {maxX}, Y: {maxY}, Z: {maxZ}");
+
+            Console.WriteLine("Минимальные координаты:");
+            Console.WriteLine($"X: {minX}, Y: {minY}, Z: {minZ}");*/
+            return new BoundingBox()
+            {
+                Min = new Vector3(minX, minY, minZ),
+                Max = new Vector3(maxX, maxY, maxZ)
+            };
         }
 
         public void Dispose()
