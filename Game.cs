@@ -32,6 +32,7 @@ namespace Fishing_SharpDX
         Plane _ground;
         Plane _water;
         Rock _rock1;
+        Tree _tree1;
 
         #endregion
 
@@ -40,6 +41,7 @@ namespace Fishing_SharpDX
         Material _groundMaterial;
         Material _waterMaterial;
         Material _rockMaterial;
+        Material _treeMaterial;
 
         #endregion
 
@@ -121,7 +123,15 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
-            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(0, .5f, 0, 1), _rockMaterial);
+            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(0, 0.25f, 0, 1), _rockMaterial);
+
+            _treeMaterial = new Material("TreeMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                32f, false, waterTex);
+            _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
@@ -156,6 +166,7 @@ namespace Fishing_SharpDX
             _water.Render(viewMatrix, projectionMatrix);
 
             _rock1.Render(viewMatrix, projectionMatrix);
+            _tree1.Render(viewMatrix, projectionMatrix);
 
             _renderer.EndRender();
         }
