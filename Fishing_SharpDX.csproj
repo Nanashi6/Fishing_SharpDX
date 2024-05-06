@@ -90,6 +90,7 @@
     <Compile Include="Objects\Camera.cs" />
     <Compile Include="Objects\MeshObject.cs" />
     <Compile Include="Objects\Nature\Plane.cs" />
+    <Compile Include="Objects\Nature\Rock.cs" />
     <Compile Include="Objects\PositionalObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

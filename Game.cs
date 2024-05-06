@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpDX.DXGI;
 using Plane = Fishing_SharpDX.Objects.Nature.Plane;
+using Fishing_SharpDX.Objects.Nature;
 
 namespace Fishing_SharpDX
 {
@@ -30,6 +31,7 @@ namespace Fishing_SharpDX
 
         Plane _ground;
         Plane _water;
+        Rock _rock1;
 
         #endregion
 
@@ -37,6 +39,7 @@ namespace Fishing_SharpDX
 
         Material _groundMaterial;
         Material _waterMaterial;
+        Material _rockMaterial;
 
         #endregion
 
@@ -50,7 +53,7 @@ namespace Fishing_SharpDX
 
         Illumination _illumination;
 
-        LightSource _spot;
+        LightSource _directionalLight;
 
         #endregion
 
@@ -82,16 +85,16 @@ namespace Fishing_SharpDX
 
             _camera = new Camera(new Vector4(0.0f, 2.0f, -10.0f, 1.0f));
 
-            _spot= new LightSource();
-            _spot.Color = new Vector4(0f, 1f, 1f, 1f);
-            _spot.Direction = new Vector4(0f, -1f, 0f, 1f);
-            _spot.Position = new Vector4(0f, 2f, 0f, 1f);
-            _spot.SpotAngle = (float)Math.PI / 6.0f;
-            _spot.LightSourceType = 2;
+            _directionalLight = new LightSource();
+            _directionalLight.Color = new Vector4(0f, 1f, 1f, 1f);
+            _directionalLight.Direction = new Vector4(0f, -1f, 0f, 1f);
+            _directionalLight.Position = new Vector4(0f, 2f, 0f, 1f);
+            /*_directionalLight.SpotAngle = (float)Math.PI / 6.0f;*/
+            _directionalLight.LightSourceType = (int)LightSource.LightType.DirectionalLight;
 
             _illumination = new Illumination(_camera.Position,
                                             new Vector4(0.3f, 0.3f, 0.3f, 1f),
-                                            new LightSource[] { _spot }
+                                            new LightSource[] { _directionalLight }
                                             );
 
             Texture groundTex = LoadTextureFromFile("Textures/ground.jpg", _renderer.AnisotropicSampler);
@@ -111,6 +114,14 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, true, waterTex);
             _water = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 20f, 1f), _waterMaterial, 10);
+
+            _rockMaterial = new Material("RockMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                32f, false, waterTex);
+            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(0, .5f, 0, 1), _rockMaterial);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
@@ -143,6 +154,8 @@ namespace Fishing_SharpDX
 
             _ground.Render(viewMatrix, projectionMatrix);
             _water.Render(viewMatrix, projectionMatrix);
+
+            _rock1.Render(viewMatrix, projectionMatrix);
 
             _renderer.EndRender();
         }
