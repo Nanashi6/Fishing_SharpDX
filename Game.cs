@@ -6,17 +6,12 @@ using Fishing_SharpDX.Objects;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DirectInput;
-using SharpDX.Mathematics.Interop;
 using SharpDX.WIC;
 using SharpDX.Windows;
 using SharpDX;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using SharpDX.DXGI;
+using Fishing_SharpDX.Objects.Player;
 
 namespace Fishing_SharpDX
 {
@@ -27,13 +22,12 @@ namespace Fishing_SharpDX
 
         #region Objects
 
-        
+        Player _player;
 
         #endregion
 
         #region Material
 
-        
 
         #endregion
 
@@ -59,6 +53,7 @@ namespace Fishing_SharpDX
 
         #endregion
 
+
         // Objects
         Camera _camera;
         Renderer _renderer;
@@ -79,7 +74,7 @@ namespace Fishing_SharpDX
             _renderer = new Renderer(_directX3DGraphics);
             _renderer.CreateConstantBuffers();
 
-            _camera = new Camera(new Vector4(0.0f, 0.0f, -10.0f, 1.0f));
+            _camera = new Camera(new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 
             _spot1 = new LightSource();
             _spot2 = new LightSource();
@@ -98,6 +93,8 @@ namespace Fishing_SharpDX
                                             new LightSource[] { _spot1, _spot2, _spot3 }
                                             );
 
+            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.0f, 0.0f, 0.0f), _camera);
+
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
 
@@ -113,15 +110,26 @@ namespace Fishing_SharpDX
             }
             _timeHelper.Update();
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
+            //test
+            _renderForm.Text += " Player pos.: " + _player.Position;
+            _renderForm.Text += " Camera pos.: " + _camera.Position;
+            _renderForm.Text += " yaw: " + _camera.Yaw;
+            _renderForm.Text += " pitch: " + _camera.Pitch;
 
             _input.Update();
             KeyUpdate();
+            MouseUpdate();
+            _player.Gravity(_timeHelper.DeltaT);
 
             Matrix viewMatrix = _camera.GetViewMatrix();
             Matrix projectionMatrix = _camera.GetProjectionMatrix();
             _renderer.BeginRender();
 
             _illumination.EyePosition = _camera.Position;
+
+/*            _renderer.UpdateMaterialProperties(_player.Material);
+            _renderer.UpdatePerObjectConstantBuffers(_player.GetWorldMatrix(), viewMatrix, projectionMatrix);
+            _renderer.RenderMeshObject(_player);*/
 
             _renderer.EndRender();
         }
@@ -138,22 +146,26 @@ namespace Fishing_SharpDX
 
         public void KeyUpdate()
         {
-            Vector3 cameraStart = Vector3.Zero;
+            Vector3 direction = Vector3.Zero;
             if (_input.IsKeyPressed(Key.W))
             {
-                cameraStart += _camera.GetCameraPositionUpDown();
+                direction += _player.GetPlayerPositionUpDown();
             }
             if (_input.IsKeyPressed(Key.S))
             {
-                cameraStart -= _camera.GetCameraPositionUpDown();
+                direction -= _player.GetPlayerPositionUpDown();
             }
             if (_input.IsKeyPressed(Key.D))
             {
-                cameraStart += _camera.GetCameraPositionLeftRight();
+                direction += _player.GetPlayerPositionLeftRight();
             }
             if (_input.IsKeyPressed(Key.A))
             {
-                cameraStart -= _camera.GetCameraPositionLeftRight();
+                direction -= _player.GetPlayerPositionLeftRight();
+            }
+            if(_input.IsKeyPressed(Key.Space))
+            {
+                _player.Jump();
             }
 
             // Перемещение объекта
@@ -175,7 +187,15 @@ namespace Fishing_SharpDX
                 _ikosaedr.Translate(new Vector4(speed, 0.0f, 0.0f, 0.0f));
             }*/
 
-            _camera.MoveBy(cameraStart.X, cameraStart.Y, cameraStart.Z);
+            _player.MoveBy(direction.X, direction.Y, direction.Z);
+        }
+
+        public void MouseUpdate()
+        {
+            float yaw = _input.GetMouseDeltaX() * 0.001f;
+            float pitch = _input.GetMouseDeltaY() * 0.001f;
+
+            _player.RotationBy(yaw, pitch);
         }
 
         public Texture LoadTextureFromFile(string fileName, SamplerState samplerState)
