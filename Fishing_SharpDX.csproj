@@ -89,6 +89,7 @@
     <Compile Include="Interface\DirectX2DGraphics.cs" />
     <Compile Include="Objects\Camera.cs" />
     <Compile Include="Objects\MeshObject.cs" />
+    <Compile Include="Objects\Nature\Plane.cs" />
     <Compile Include="Objects\PositionalObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,6 +106,13 @@
     <Content Include="Shaders\vertex.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Textures\ground.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Textures\water.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

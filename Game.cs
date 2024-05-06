@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpDX.DXGI;
+using Plane = Fishing_SharpDX.Objects.Nature.Plane;
 
 namespace Fishing_SharpDX
 {
@@ -27,13 +28,15 @@ namespace Fishing_SharpDX
 
         #region Objects
 
-        
+        Plane _ground;
+        Plane _water;
 
         #endregion
 
-        #region Material
+        #region Materials
 
-        
+        Material _groundMaterial;
+        Material _waterMaterial;
 
         #endregion
 
@@ -43,13 +46,11 @@ namespace Fishing_SharpDX
 
         #endregion
 
-        #region Light
+        #region Lights
 
         Illumination _illumination;
 
-        LightSource _spot1;
-        LightSource _spot2;
-        LightSource _spot3;
+        LightSource _spot;
 
         #endregion
 
@@ -79,24 +80,37 @@ namespace Fishing_SharpDX
             _renderer = new Renderer(_directX3DGraphics);
             _renderer.CreateConstantBuffers();
 
-            _camera = new Camera(new Vector4(0.0f, 0.0f, -10.0f, 1.0f));
+            _camera = new Camera(new Vector4(0.0f, 2.0f, -10.0f, 1.0f));
 
-            _spot1 = new LightSource();
-            _spot2 = new LightSource();
-            _spot2.Color = new Vector4(0f, 0f, 1f, 1f);
-            _spot2.Direction = new Vector4(1f, 0f, 0f, 1f);
-            _spot2.Position = new Vector4(-2f, 0f, 0f, 1f);
-            _spot3 = new LightSource();
-            _spot3.Color = new Vector4(0f, 1f, 0f, 1f);
-            _spot3.Direction = new Vector4(0f, -1f, 0f, 1f);
-            _spot3.Position = new Vector4(0f, 2f, 0f, 1f);
-            _spot3.SpotAngle = (float)Math.PI / 6.0f;
-            _spot3.LightSourceType = 2;
+            _spot= new LightSource();
+            _spot.Color = new Vector4(0f, 1f, 1f, 1f);
+            _spot.Direction = new Vector4(0f, -1f, 0f, 1f);
+            _spot.Position = new Vector4(0f, 2f, 0f, 1f);
+            _spot.SpotAngle = (float)Math.PI / 6.0f;
+            _spot.LightSourceType = 2;
 
             _illumination = new Illumination(_camera.Position,
                                             new Vector4(0.3f, 0.3f, 0.3f, 1f),
-                                            new LightSource[] { _spot1, _spot2, _spot3 }
+                                            new LightSource[] { _spot }
                                             );
+
+            Texture groundTex = LoadTextureFromFile("Textures/ground.jpg", _renderer.AnisotropicSampler);
+            _groundMaterial = new Material("GroundMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
+                32f, true, groundTex);
+            _ground = new Plane("Ground", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 0f, 1f), _groundMaterial, 10);
+
+            Texture waterTex = LoadTextureFromFile("Textures/water.jpg", _renderer.AnisotropicSampler);
+            _waterMaterial = new Material("WaterMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
+                32f, true, waterTex);
+            _water = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 20f, 1f), _waterMaterial, 10);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
@@ -115,6 +129,9 @@ namespace Fishing_SharpDX
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
 
             _input.Update();
+            _camera.Yaw += _input.GetMouseDeltaX() * 0.01f;
+            _camera.Pitch += _input.GetMouseDeltaY() * 0.01f;
+
             KeyUpdate();
 
             Matrix viewMatrix = _camera.GetViewMatrix();
@@ -122,6 +139,10 @@ namespace Fishing_SharpDX
             _renderer.BeginRender();
 
             _illumination.EyePosition = _camera.Position;
+            _renderer.UpdateIlluminationProperties(_illumination);
+
+            _ground.Render(viewMatrix, projectionMatrix);
+            _water.Render(viewMatrix, projectionMatrix);
 
             _renderer.EndRender();
         }
