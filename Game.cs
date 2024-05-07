@@ -76,6 +76,9 @@ namespace Fishing_SharpDX
         private bool _firstRun = true;
 
         //hud
+        private bool _isPressI = false;
+        private bool _isDrawNotebook = false;
+
         private bool _isDrawBitingCondition = false;
         private bool _isDrawCenterMessage = false;
         private float _timeBitingConditionDuration = 2.5f;
@@ -217,15 +220,27 @@ namespace Fishing_SharpDX
             {
                 direction -= _player.GetPlayerPositionLeftRight();
             }
-            if(_input.IsKeyPressed(Key.Space))
+            if (_input.IsKeyPressed(Key.Space))
             {
                 _player.Jump();
             }
 
-/*            if (_input.IsKeyPressed(Key.I))
+            if (_input.IsKeyPressed(Key.I))
             {
-                _isDrawBitingCondition = true;
-            }*/
+                if (!_isPressI)
+                {
+                    _isDrawNotebook = !_isDrawNotebook;
+                }
+
+                _isPressI = true;
+            }
+            else
+                _isPressI = false;
+
+            if (_input.IsKeyPressed(Key.I))
+            {
+                _isDrawCenterMessage = true;
+            }
 
             _player.MoveBy(direction.X, direction.Y, direction.Z);
         }
@@ -241,7 +256,6 @@ namespace Fishing_SharpDX
         public void RenderHUD()
         {
             _hud.DrawScore(_player.Score);
-
             if (_isDrawBitingCondition)
             {
                 if (_timeBitingConditionDuration > _timeBitingCondition)
@@ -260,7 +274,7 @@ namespace Fishing_SharpDX
             {
                 if (_timeCenterMessageDuration > _timeCenterMessage)
                 {
-                    _hud.DrawCenterMessage();
+                    _hud.DrawCenterMessage(new Fish("Fish", _directX3DGraphics, _renderer, Vector4.Zero, null));
                     _timeCenterMessage += _timeHelper.DeltaT;
                 }
                 else
@@ -268,6 +282,11 @@ namespace Fishing_SharpDX
                     _isDrawCenterMessage = false;
                     _timeCenterMessage = 0;
                 }
+            }
+
+            if (_isDrawNotebook)
+            {
+               _hud.DrawNotebook();
             }
         }
 

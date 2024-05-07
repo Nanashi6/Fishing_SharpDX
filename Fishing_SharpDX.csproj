@@ -80,6 +80,7 @@
   <ItemGroup>
     <Compile Include="Enums\FishingStatus.cs" />
     <Compile Include="Interface\HUD.cs" />
+    <Compile Include="Objects\Fish.cs" />
     <Compile Include="Objects\Player\Player.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Graphics\DirectX3DGraphics.cs" />

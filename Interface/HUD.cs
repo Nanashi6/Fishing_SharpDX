@@ -1,4 +1,5 @@
 ﻿using Fishing_SharpDX.Enums;
+using Fishing_SharpDX.Objects;
 using SharpDX.Mathematics.Interop;
 using System;
 using System.Collections.Generic;
@@ -80,13 +81,21 @@ namespace Fishing_SharpDX.Interface
             _directX2DGraphics.EndDraw();
         }
 
-        public void DrawCenterMessage()
+        public void DrawCenterMessage(Fish fish)
         {
             RawRectangleF rect = new RawRectangleF(_width / 2 - 500, _height / 2 - 200, _width / 2 + 500, _height / 2 + 200);
 
             _directX2DGraphics.BeginDraw();
             //_directX2DGraphics.DrawRectangle(rect, _brushRed);
-            _directX2DGraphics.DrawText($"Message", _textCenter, rect, _brushGreen);
+            _directX2DGraphics.DrawText(fish.ToString(), _textCenter, rect, _brushGreen);
+            _directX2DGraphics.EndDraw();
+        }
+
+        public void DrawNotebook()
+        {
+            RawRectangleF rect = new RawRectangleF(_width / 2 - 800, 50, _width / 2 + 800, _height - 50);
+            _directX2DGraphics.BeginDraw();
+            _directX2DGraphics.DrawRectangle(rect, _brushBlackAlpha);
             _directX2DGraphics.EndDraw();
         }
 
