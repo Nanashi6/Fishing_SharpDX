@@ -199,9 +199,8 @@ namespace Fishing_SharpDX.Interface
             _renderTarget.FillEllipse(ellipse, _solidColorBrushes[brushIndex]);
         }
 
-        public void DrawRectangle(Vector4 vertex, int brushIndex)
+        public void DrawRectangle(RawRectangleF rectangle, int brushIndex)
         {
-            RawRectangleF rectangle = new RawRectangleF(vertex.X, vertex.Y, vertex.Z, vertex.W);
             _renderTarget.FillRectangle(rectangle, _solidColorBrushes[brushIndex]);
         }
 

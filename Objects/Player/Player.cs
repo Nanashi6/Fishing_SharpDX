@@ -7,10 +7,12 @@ namespace Fishing_SharpDX.Objects.Player
     {
         private Camera _camera;
         private float _mass = 5f;
-        private float _jumpForce = 0.5f;
+        private float _jumpForce = 0.2f;
         private float _gravityForce = 1f;
         private bool _isGround = true;
         private float _fallTime = 0.0f;
+        private int _score;
+        public int Score { get { return _score; } }
         public Player(DirectX3DGraphics directX3DGraphics, Renderer renderer, Vector4 position, Camera camera)
         : base("Player", directX3DGraphics, renderer, Vector4.Zero, 
               new VertexDataStruct[]
@@ -78,6 +80,7 @@ namespace Fishing_SharpDX.Objects.Player
                         5, 7, 3,
             }, null)
         {
+            _score = 0;
             _camera = camera;
         }
 
@@ -137,6 +140,11 @@ namespace Fishing_SharpDX.Objects.Player
             {
                 _camera.Pitch += pitch;
             }
+        }
+
+        public void AddScore(int score)
+        {
+            _score += score;
         }
 
         public Vector3 GetPlayerPositionUpDown()

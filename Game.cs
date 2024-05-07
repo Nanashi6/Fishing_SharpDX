@@ -15,6 +15,7 @@ using SharpDX.DXGI;
 using Fishing_SharpDX.Objects.Player;
 using Plane = Fishing_SharpDX.Objects.Nature.Plane;
 using Fishing_SharpDX.Objects.Nature;
+using Fishing_SharpDX.Enums;
 
 namespace Fishing_SharpDX
 {
@@ -59,6 +60,7 @@ namespace Fishing_SharpDX
         #region Interfaces
 
         DirectX2DGraphics _directX2DGraphics;
+        HUD _hud;
 
         #endregion
 
@@ -72,6 +74,14 @@ namespace Fishing_SharpDX
         Input _input;
 
         private bool _firstRun = true;
+
+        //hud
+        private bool _isDrawBitingCondition = false;
+        private bool _isDrawCenterMessage = false;
+        private float _timeBitingConditionDuration = 2.5f;
+        private float _timeCenterMessageDuration = 2.5f;
+        private float _timeBitingCondition = 0.0f;
+        private float _timeCenterMessage = 0.0f;
 
         public Game()
         {
@@ -137,6 +147,7 @@ namespace Fishing_SharpDX
             _timeHelper = new TimeHelper();
 
             _directX2DGraphics = new DirectX2DGraphics(_directX3DGraphics);
+            _hud = new HUD(_directX2DGraphics);
         }
 
         private void RenderLoopCallback()
@@ -149,10 +160,6 @@ namespace Fishing_SharpDX
             _timeHelper.Update();
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
             //test
-            _renderForm.Text += " Player pos.: " + _player.Position;
-            _renderForm.Text += " Camera pos.: " + _camera.Position;
-            _renderForm.Text += " yaw: " + _camera.Yaw;
-            _renderForm.Text += " pitch: " + _camera.Pitch;
 
             _input.Update();
             _camera.Yaw += _input.GetMouseDeltaX() * 0.01f;
@@ -175,9 +182,7 @@ namespace Fishing_SharpDX
             _rock1.Render(viewMatrix, projectionMatrix);
             _tree1.Render(viewMatrix, projectionMatrix);
 
-/*            _renderer.UpdateMaterialProperties(_player.Material);
-            _renderer.UpdatePerObjectConstantBuffers(_player.GetWorldMatrix(), viewMatrix, projectionMatrix);
-            _renderer.RenderMeshObject(_player);*/
+            RenderHUD();
 
             _renderer.EndRender();
         }
@@ -185,6 +190,7 @@ namespace Fishing_SharpDX
         {
             _directX3DGraphics.Resize();
             _camera.Aspect = _renderForm.ClientSize.Width / (float)_renderForm.ClientSize.Height;
+            _hud.Resize(_renderForm.Height, _renderForm.Width);
         }
 
         public void Run()
@@ -216,23 +222,9 @@ namespace Fishing_SharpDX
                 _player.Jump();
             }
 
-            // Перемещение объекта
-            /*float speed = 0.05f;
-            if (_input.IsKeyPressed(Key.Up))
+/*            if (_input.IsKeyPressed(Key.I))
             {
-                _ikosaedr.Translate(new Vector4(0.0f, 0.0f, speed, 0.0f));
-            }
-            if (_input.IsKeyPressed(Key.Down))
-            {
-                _ikosaedr.Translate(new Vector4(0.0f, 0.0f, -speed, 0.0f));
-            }
-            if (_input.IsKeyPressed(Key.Left))
-            {
-                _ikosaedr.Translate(new Vector4(-speed, 0.0f, 0.0f, 0.0f));
-            }
-            if (_input.IsKeyPressed(Key.Right))
-            {
-                _ikosaedr.Translate(new Vector4(speed, 0.0f, 0.0f, 0.0f));
+                _isDrawBitingCondition = true;
             }*/
 
             _player.MoveBy(direction.X, direction.Y, direction.Z);
@@ -244,6 +236,39 @@ namespace Fishing_SharpDX
             float pitch = _input.GetMouseDeltaY() * 0.001f;
 
             _player.RotationBy(yaw, pitch);
+        }
+
+        public void RenderHUD()
+        {
+            _hud.DrawScore(_player.Score);
+
+            if (_isDrawBitingCondition)
+            {
+                if (_timeBitingConditionDuration > _timeBitingCondition)
+                {
+                    _hud.DrawBitingCondition(FishingStatus.Pecks);
+                    _timeBitingCondition += _timeHelper.DeltaT;
+                }
+                else
+                {
+                    _isDrawBitingCondition = false;
+                    _timeBitingCondition = 0;
+                }
+            }
+
+            if (_isDrawCenterMessage)
+            {
+                if (_timeCenterMessageDuration > _timeCenterMessage)
+                {
+                    _hud.DrawCenterMessage();
+                    _timeCenterMessage += _timeHelper.DeltaT;
+                }
+                else
+                {
+                    _isDrawCenterMessage = false;
+                    _timeCenterMessage = 0;
+                }
+            }
         }
 
         public Texture LoadTextureFromFile(string fileName, SamplerState samplerState)
