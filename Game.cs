@@ -97,7 +97,7 @@ namespace Fishing_SharpDX
                                             new LightSource[] { _directionalLight }
                                             );
 
-            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.0f, 0.0f, 0.0f), _camera);
+            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), _camera);
 
             Texture groundTex = LoadTextureFromFile("Textures/ground.jpg", _renderer.AnisotropicSampler);
             _groundMaterial = new Material("GroundMaterial",
@@ -132,6 +132,8 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
             _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
+
+            ObjectsStorage.AddObject(_ground, _water, _rock1, _tree1);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
@@ -169,15 +171,16 @@ namespace Fishing_SharpDX
             _illumination.EyePosition = _camera.Position;
             _renderer.UpdateIlluminationProperties(_illumination);
 
-            _ground.Render(viewMatrix, projectionMatrix);
+            ObjectsStorage.Render(viewMatrix, projectionMatrix);
+            /*_ground.Render(viewMatrix, projectionMatrix);
             _water.Render(viewMatrix, projectionMatrix);
 
             _rock1.Render(viewMatrix, projectionMatrix);
-            _tree1.Render(viewMatrix, projectionMatrix);
+            _tree1.Render(viewMatrix, projectionMatrix);*/
 
-/*            _renderer.UpdateMaterialProperties(_player.Material);
-            _renderer.UpdatePerObjectConstantBuffers(_player.GetWorldMatrix(), viewMatrix, projectionMatrix);
-            _renderer.RenderMeshObject(_player);*/
+            /*            _renderer.UpdateMaterialProperties(_player.Material);
+                        _renderer.UpdatePerObjectConstantBuffers(_player.GetWorldMatrix(), viewMatrix, projectionMatrix);
+                        _renderer.RenderMeshObject(_player);*/
 
             _renderer.EndRender();
         }

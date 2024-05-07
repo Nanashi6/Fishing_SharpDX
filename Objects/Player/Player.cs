@@ -84,7 +84,7 @@ namespace Fishing_SharpDX.Objects.Player
         public void Gravity(float deltaTime)
         {
             //!_isGround
-            if (base.Position.Y > 0)
+            if (!_isGround)
             {
                 _fallTime += 1.0f;
                 Vector4 gravity = new Vector4(0f, -_gravityForce * _mass, 0f, 1.0f);
