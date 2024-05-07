@@ -9,19 +9,21 @@ namespace Fishing_SharpDX.Objects
 {
     internal static class ObjectsStorage
     {
-        static List<MeshObject> objects = new List<MeshObject>();
+        private static List<MeshObject> _objects = new List<MeshObject>();
 
-        public static void AddObject(params MeshObject[] objects)
+        public static List<MeshObject> Objects { get => _objects; }
+
+        public static void AddObject(params MeshObject[] newObjects)
         {
-            foreach(var obj in objects)
+            foreach(var obj in newObjects)
             {
-                ObjectsStorage.objects.Add(obj);
+                _objects.Add(obj);
             }
         }
 
         public static void Render(Matrix viewMatrix, Matrix projectionMatrix)
         {
-            foreach(var obj in objects)
+            foreach(var obj in _objects)
             {
                 obj.Render(viewMatrix, projectionMatrix);
             }
