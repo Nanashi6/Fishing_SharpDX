@@ -26,6 +26,7 @@ namespace Fishing_SharpDX
         #region Objects
 
         Player _player;
+        Fishingrod _fishingrod;
         Plane _ground;
         Plane _water;
         Rock _rock1;
@@ -92,13 +93,6 @@ namespace Fishing_SharpDX
             /*_directionalLight.SpotAngle = (float)Math.PI / 6.0f;*/
             _directionalLight.LightSourceType = (int)LightSource.LightType.DirectionalLight;
 
-            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)));
-
-            _illumination = new Illumination(_player.Camera.Position,
-                                            new Vector4(0.3f, 0.3f, 0.3f, 1f),
-                                            new LightSource[] { _directionalLight }
-                                            );
-
             Texture groundTex = LoadTextureFromFile("Textures/ground.jpg", _renderer.AnisotropicSampler);
             _groundMaterial = new Material("GroundMaterial",
                 new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -133,6 +127,14 @@ namespace Fishing_SharpDX
                 32f, false, waterTex);
             _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
 
+            _fishingrod = new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.5f, 0.0f), _rockMaterial);
+            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)), _fishingrod);
+
+            _illumination = new Illumination(_player.Camera.Position,
+                                new Vector4(0.3f, 0.3f, 0.3f, 1f),
+                                new LightSource[] { _directionalLight }
+                                );
+
             ObjectsStorage.AddObject(_ground,_water, _rock1, _tree1);
 
             _input = new Input(_renderForm.Handle);
@@ -157,7 +159,7 @@ namespace Fishing_SharpDX
             _renderForm.Text += " yaw: " + _camera.Yaw;
             _renderForm.Text += " pitch: " + _camera.Pitch;*/
             _renderForm.Text += " CAm yaw: " + _player.Camera.Yaw;
-            _renderForm.Text += " Play yaw: " + _player.Yaw;
+            _renderForm.Text += " _fisPOs" + _fishingrod.Position;
 
             _input.Update();
 
@@ -173,6 +175,7 @@ namespace Fishing_SharpDX
             _renderer.UpdateIlluminationProperties(_illumination);
 
             ObjectsStorage.Render(viewMatrix, projectionMatrix);
+            _player.Render(viewMatrix, projectionMatrix);
             /*_ground.Render(viewMatrix, projectionMatrix);
             _water.Render(viewMatrix, projectionMatrix);
 

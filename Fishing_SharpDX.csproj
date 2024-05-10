@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\Fish.cs" />
     <Compile Include="Objects\ObjectsStorage.cs" />
     <Compile Include="Objects\Player\Fishingrod.cs" />
     <Compile Include="Objects\Player\Player.cs" />

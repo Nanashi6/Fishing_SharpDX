@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Fishing_SharpDX.Objects.Player
 {
-    internal class Fishingrod : MeshObject
+    public class Fishingrod : MeshObject
     {
         public Fishingrod(string name, DirectX3DGraphics directX3DGraphics, Renderer renderer,
-            Vector4 initialPosition, VertexDataStruct[] vertices, uint[] indexes, Material material, float scale = 0.1f) 
+            Vector4 initialPosition, Material material, float scale = 0.1f) 
             : base(name, directX3DGraphics, renderer, initialPosition,
                 new MeshObject.VertexDataStruct[24]
                 {
@@ -195,6 +195,24 @@ namespace Fishing_SharpDX.Objects.Player
                 }, 
                 material)
         {
+        }
+
+        public bool StartFishing()
+        {
+            return false;
+        }
+
+        public Fish EndFishing()
+        {
+            return new Fish();
+        }
+
+        public void RotateAroundPosition(Vector4 position, float yaw)
+        {
+            float newLocalX = (float)(Position.X * Math.Cos(yaw) - Position.Z * Math.Sin(yaw));
+            float newLocalZ = (float)(Position.X * Math.Sin(yaw) + Position.Z * Math.Cos(yaw));
+
+            YawBy(yaw);
         }
     }
 }

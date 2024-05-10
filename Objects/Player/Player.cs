@@ -8,16 +8,17 @@ namespace Fishing_SharpDX.Objects.Player
     public class Player : MeshObject
     {
         private Camera _camera;
+        private Fishingrod _fishingrod;
         private float _mass = 5f;
-        private float _actionRadius = 0f;
+        private float _actionRadius = 0.25f;
         private float _speed = 10f;
-        private float _jumpForce = 0.5f;
+        private float _jumpForce = 0.0f;
         private float _gravityForce = 1f;
         private bool _isGround = true;
         private float _fallTime = 0.0f;
 
         public Camera Camera { get => _camera; }
-        public Player(DirectX3DGraphics directX3DGraphics, Renderer renderer, Vector4 position, Camera camera)
+        public Player(DirectX3DGraphics directX3DGraphics, Renderer renderer, Vector4 position, Camera camera, Fishingrod fishingrod)
         : base("Player", directX3DGraphics, renderer, Vector4.Zero,
                new MeshObject.VertexDataStruct[24]
                 {
@@ -202,11 +203,11 @@ namespace Fishing_SharpDX.Objects.Player
             null)
         {
             _camera = camera;
+            _fishingrod = fishingrod;
         }
 
         public void Gravity(float deltaTime)
         {
-            //!_isGround
             if (!_isGround)
             {
                 _fallTime += 1.0f;
@@ -217,10 +218,10 @@ namespace Fishing_SharpDX.Objects.Player
                 base._position.Y += _jumpForce + velocity.Y;
                 _camera._position.Y += _jumpForce + velocity.Y;
 
-                if(base.Position.Y < 0)
+                if(base.Position.Y < (this.GetBoundingBox().Max.Y - this.GetBoundingBox().Min.Y) / 2)
                 {
-                    base._position.Y = 0f;
-                    _camera._position.Y = 0f;
+                    base._position.Y = (this.GetBoundingBox().Max.Y - this.GetBoundingBox().Min.Y) / 2;
+                    _camera._position.Y = this.GetBoundingBox().Max.Y;
                 }
             }
             else
@@ -242,22 +243,28 @@ namespace Fishing_SharpDX.Objects.Player
         public override void MoveBy(float x, float y, float z)
         {
             Vector4 prevPosition = Position;
+            Vector3 fisPrevPos = (Vector3)_fishingrod.Position;
 
             y = 0;
-            base.MoveBy(x * _speed, y, z * _speed);
-            _camera.MoveBy(x * _speed, y, z * _speed);
+            Vector3 moveVector = new Vector3(x * _speed, y, z * _speed);
+            base.MoveBy(moveVector);
+            _camera.MoveBy(moveVector);
+            _fishingrod.MoveBy(moveVector);
 
             if(hasIntersection())
             {
                 MoveTo((Vector3)prevPosition);
                 _camera.MoveTo(prevPosition.X, _camera.Position.Y, prevPosition.Z);
+                _fishingrod.MoveTo(fisPrevPos);
             }
         }
 
         public void RotationBy(float yaw, float pitch)
         {
-            Yaw += yaw;
-            _camera.Yaw += yaw;
+            YawBy(yaw);
+            _camera.YawBy(yaw);
+
+            if(yaw != 0) _fishingrod.RotateAroundPosition(Position, yaw);
 
             //-89.9 и 45 градусов (ограничение в радианах)
             if(pitch < 0 && _camera.Pitch > -1.55f)
@@ -286,19 +293,27 @@ namespace Fishing_SharpDX.Objects.Player
         {
             foreach(var obj in ObjectsStorage.Objects)
             {
-                if(obj.Name == "Ground")
+                if(Position.X >= obj.GetBoundingBox().Min.X - _actionRadius && Position.X <= obj.GetBoundingBox().Max.X + _actionRadius &&
+                    Position.Z >= obj.GetBoundingBox().Min.Z - _actionRadius && Position.Z <= obj.GetBoundingBox().Max.Z + _actionRadius &&
+                    Position.Y - (this.GetBoundingBox().Max.Y - this.GetBoundingBox().Min.Y) / 2 <= obj.Position.Y)
                 {
-                    _isGround = true;
-                }
-                else if(Position.X >= obj.GetBoundingBox().Min.X - _actionRadius && Position.X <= obj.GetBoundingBox().Max.X + _actionRadius &&
-                    Position.Z >= obj.GetBoundingBox().Min.Z - _actionRadius && Position.Z <= obj.GetBoundingBox().Max.Z + _actionRadius)
-                {
-                    Console.WriteLine(Position.ToString());
+                    if (obj.Name == "Ground")
+                    {
+                        _isGround = true;
+                        continue;
+                    }
+                    /*Console.WriteLine(Position.ToString());*/
                     return true;
                 }
             }
 
             return false;
+        }
+
+        public override void Render(Matrix viewMatrix, Matrix projectionMatrix)
+        {
+            /*base.Render(viewMatrix, projectionMatrix);*/
+            _fishingrod.Render(viewMatrix, projectionMatrix);
         }
     }
 }
