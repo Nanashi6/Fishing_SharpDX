@@ -26,6 +26,7 @@ namespace Fishing_SharpDX
         #region Objects
 
         Player _player;
+        Fishingrod _fishingrod;
         Plane _ground;
         Plane _water;
         Rock _rock1;
@@ -83,7 +84,7 @@ namespace Fishing_SharpDX
             _renderer = new Renderer(_directX3DGraphics);
             _renderer.CreateConstantBuffers();
 
-            _camera = new Camera(new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+            /*_camera = new Camera(new Vector4(0.0f, 0.0f, 0.0f, 1.0f));*/
 
             _directionalLight = new LightSource();
             _directionalLight.Color = new Vector4(0f, 1f, 1f, 1f);
@@ -91,13 +92,6 @@ namespace Fishing_SharpDX
             _directionalLight.Position = new Vector4(0f, 2f, 0f, 1f);
             /*_directionalLight.SpotAngle = (float)Math.PI / 6.0f;*/
             _directionalLight.LightSourceType = (int)LightSource.LightType.DirectionalLight;
-
-            _illumination = new Illumination(_camera.Position,
-                                            new Vector4(0.3f, 0.3f, 0.3f, 1f),
-                                            new LightSource[] { _directionalLight }
-                                            );
-
-            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.0f, 0.0f, 0.0f), _camera);
 
             Texture groundTex = LoadTextureFromFile("Textures/ground.jpg", _renderer.AnisotropicSampler);
             _groundMaterial = new Material("GroundMaterial",
@@ -123,7 +117,7 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
-            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(0, 0.25f, 0, 1), _rockMaterial);
+            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(-5, 0.25f, 0, 1), _rockMaterial);
 
             _treeMaterial = new Material("TreeMaterial",
                 new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -132,6 +126,17 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
             _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
+
+            _fishingrod = new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
+            _fishingrod.PitchBy((float)Math.PI * 40/ 180);
+            _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)), _fishingrod);
+
+            _illumination = new Illumination(_player.Camera.Position,
+                                new Vector4(0.3f, 0.3f, 0.3f, 1f),
+                                new LightSource[] { _directionalLight }
+                                );
+
+            ObjectsStorage.AddObject(_ground,_water, _rock1, _tree1);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
@@ -149,42 +154,41 @@ namespace Fishing_SharpDX
             _timeHelper.Update();
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
             //test
+            /*
             _renderForm.Text += " Player pos.: " + _player.Position;
             _renderForm.Text += " Camera pos.: " + _camera.Position;
             _renderForm.Text += " yaw: " + _camera.Yaw;
-            _renderForm.Text += " pitch: " + _camera.Pitch;
+            _renderForm.Text += " pitch: " + _camera.Pitch;*/
+            _renderForm.Text += " CAm yaw: " + _player.Camera.Yaw;
+            _renderForm.Text += " _fisPOs" + _fishingrod.Position;
 
             _input.Update();
-            _camera.Yaw += _input.GetMouseDeltaX() * 0.01f;
-            _camera.Pitch += _input.GetMouseDeltaY() * 0.01f;
 
             KeyUpdate();
             MouseUpdate();
             _player.Gravity(_timeHelper.DeltaT);
 
-            Matrix viewMatrix = _camera.GetViewMatrix();
-            Matrix projectionMatrix = _camera.GetProjectionMatrix();
+            Matrix viewMatrix = _player.Camera.GetViewMatrix();
+            Matrix projectionMatrix = _player.Camera.GetProjectionMatrix();
             _renderer.BeginRender();
 
-            _illumination.EyePosition = _camera.Position;
+            _illumination.EyePosition = _player.Camera.Position;
             _renderer.UpdateIlluminationProperties(_illumination);
 
-            _ground.Render(viewMatrix, projectionMatrix);
+            ObjectsStorage.Render(viewMatrix, projectionMatrix);
+            _player.Render(viewMatrix, projectionMatrix);
+            /*_ground.Render(viewMatrix, projectionMatrix);
             _water.Render(viewMatrix, projectionMatrix);
 
             _rock1.Render(viewMatrix, projectionMatrix);
-            _tree1.Render(viewMatrix, projectionMatrix);
-
-/*            _renderer.UpdateMaterialProperties(_player.Material);
-            _renderer.UpdatePerObjectConstantBuffers(_player.GetWorldMatrix(), viewMatrix, projectionMatrix);
-            _renderer.RenderMeshObject(_player);*/
+            _tree1.Render(viewMatrix, projectionMatrix);*/
 
             _renderer.EndRender();
         }
         public void RenderFormResizedCallback(object sender, EventArgs args)
         {
             _directX3DGraphics.Resize();
-            _camera.Aspect = _renderForm.ClientSize.Width / (float)_renderForm.ClientSize.Height;
+            _player.Camera.Aspect = _renderForm.ClientSize.Width / (float)_renderForm.ClientSize.Height;
         }
 
         public void Run()
@@ -216,32 +220,13 @@ namespace Fishing_SharpDX
                 _player.Jump();
             }
 
-            // Перемещение объекта
-            /*float speed = 0.05f;
-            if (_input.IsKeyPressed(Key.Up))
-            {
-                _ikosaedr.Translate(new Vector4(0.0f, 0.0f, speed, 0.0f));
-            }
-            if (_input.IsKeyPressed(Key.Down))
-            {
-                _ikosaedr.Translate(new Vector4(0.0f, 0.0f, -speed, 0.0f));
-            }
-            if (_input.IsKeyPressed(Key.Left))
-            {
-                _ikosaedr.Translate(new Vector4(-speed, 0.0f, 0.0f, 0.0f));
-            }
-            if (_input.IsKeyPressed(Key.Right))
-            {
-                _ikosaedr.Translate(new Vector4(speed, 0.0f, 0.0f, 0.0f));
-            }*/
-
-            _player.MoveBy(direction.X, direction.Y, direction.Z);
+            _player.MoveBy(direction.X * _timeHelper.DeltaT, direction.Y * _timeHelper.DeltaT, direction.Z * _timeHelper.DeltaT);
         }
 
         public void MouseUpdate()
         {
-            float yaw = _input.GetMouseDeltaX() * 0.001f;
-            float pitch = _input.GetMouseDeltaY() * 0.001f;
+            float yaw = _input.GetMouseDeltaX() * 0.01f;
+            float pitch = _input.GetMouseDeltaY() * 0.01f;
 
             _player.RotationBy(yaw, pitch);
         }
