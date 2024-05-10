@@ -79,9 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\FishingStatus.cs" />
+    <Compile Include="Fishing.cs" />
     <Compile Include="Interface\HUD.cs" />
     <Compile Include="Objects\Fish.cs" />
-    <Compile Include="Objects\Fish.cs" />
+    <Compile Include="Objects\Floater.cs" />
     <Compile Include="Objects\ObjectsStorage.cs" />
     <Compile Include="Objects\Parsers\ObjParser.cs" />
     <Compile Include="Objects\Player\Fishingrod.cs" />
@@ -114,6 +115,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\vertex.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Textures\floater.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Textures\ground.jpg">

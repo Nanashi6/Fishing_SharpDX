@@ -1,5 +1,6 @@
 ﻿using Fishing_SharpDX.Enums;
 using Fishing_SharpDX.Objects;
+using SharpDX;
 using SharpDX.Mathematics.Interop;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,17 @@ namespace Fishing_SharpDX.Interface
             _brushBlackAlpha = _directX2DGraphics.NewSolidColorBrush(new RawColor4(0.0f, 0.0f, 0.0f, 1.0f));
         }
 
+
+        public void DrawAim()
+        {
+            Vector2 center = new Vector2(_width / 2f, _height / 2f);
+
+            _directX2DGraphics.BeginDraw();
+            _directX2DGraphics.DrawEcllipse(center, 4f, _brushBlackAlpha);
+            _directX2DGraphics.DrawEcllipse(center, 3f, _brushWhite);
+            _directX2DGraphics.EndDraw();
+        }
+
         public void DrawScore(int score)
         {
             RawRectangleF rect = new RawRectangleF(20, 0, _width, 50);
@@ -83,11 +95,11 @@ namespace Fishing_SharpDX.Interface
 
         public void DrawCenterMessage(Fish fish)
         {
-            RawRectangleF rect = new RawRectangleF(_width / 2 - 500, _height / 2 - 200, _width / 2 + 500, _height / 2 + 200);
+            RawRectangleF rect = new RawRectangleF(_width / 2 - 500, _height / 3 - 200, _width / 2 + 500, _height / 3 + 200);
 
             _directX2DGraphics.BeginDraw();
             //_directX2DGraphics.DrawRectangle(rect, _brushRed);
-            _directX2DGraphics.DrawText(fish.ToString(), _textCenter, rect, _brushGreen);
+            _directX2DGraphics.DrawText(fish.ToString(), _textCenter, rect, _brushWhite);
             _directX2DGraphics.EndDraw();
         }
 

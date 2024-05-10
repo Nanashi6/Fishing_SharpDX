@@ -24,11 +24,14 @@ namespace Fishing_SharpDX
     {
         RenderForm _renderForm;
         DirectX3DGraphics _directX3DGraphics;
+        Fishing _fishing;
 
         #region Objects
 
         Player _player;
         Fishingrod _fishingrod;
+        Fish _fish;
+        Floater _floater;
         Plane _ground;
         Plane _water;
         MeshObject _rock1;
@@ -38,6 +41,7 @@ namespace Fishing_SharpDX
 
         #region Materials
 
+        Material _floaterMaterial;
         Material _groundMaterial;
         Material _waterMaterial;
         Material _rockMaterial;
@@ -79,6 +83,9 @@ namespace Fishing_SharpDX
 
         //hud
         private bool _isPressI = false;
+        private bool _isPressMouseButtonLeft = false;
+        private bool _isPressMouseButtonRight = false;
+
         private bool _isDrawNotebook = false;
 
         private bool _isDrawBitingCondition = false;
@@ -218,6 +225,9 @@ namespace Fishing_SharpDX
                 zabor11, zabor21, zabor31, zabor41, zabor51, zabor61, zabor71, zabor81, zabor91,
                 zabor111, zabor211, zabor311, zabor411, zabor511, zabor611, zabor711, zabor811, zabor911, zabor9111);
 
+            _fish = null;
+            Fish fish = new Fish("Karp", _directX3DGraphics, _renderer, Vector4.Zero, _floaterMaterial);
+            _fishing = new Fishing(fish);
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
 
@@ -235,11 +245,6 @@ namespace Fishing_SharpDX
             _timeHelper.Update();
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
             //test
-            /*
-            _renderForm.Text += " Player pos.: " + _player.Position;
-            _renderForm.Text += " Camera pos.: " + _camera.Position;
-            _renderForm.Text += " yaw: " + _camera.Yaw;
-            _renderForm.Text += " pitch: " + _camera.Pitch;*/
             _renderForm.Text += " CAm yaw: " + _player.Camera.Yaw;
             _renderForm.Text += " _fisPOs" + _fishingrod.Position;
 
@@ -258,6 +263,21 @@ namespace Fishing_SharpDX
 
             ObjectsStorage.Render(viewMatrix, projectionMatrix);
             _player.Render(viewMatrix, projectionMatrix);
+
+            if (_fishing.IsFishing)
+            {
+                if(_fishing.Status == FishingStatus.Pecks)
+                {
+                    _player.Fishingrod.Floater.Biting();
+                }
+
+                float distance = Vector3.Distance((Vector3)_player.Position, (Vector3)_player.Fishingrod.Floater.Position);
+                if (distance > 20f)
+                {
+                    _player.Fishingrod.EndFishing();
+                    _fishing.EndFishing();
+                }
+            }
 
             RenderHUD();
 
@@ -311,10 +331,6 @@ namespace Fishing_SharpDX
             else
                 _isPressI = false;
 
-            if (_input.IsKeyPressed(Key.I))
-            {
-                _isDrawCenterMessage = true;
-            }
             _player.MoveBy(direction.X * _timeHelper.DeltaT, direction.Y * _timeHelper.DeltaT, direction.Z * _timeHelper.DeltaT);
         }
 
@@ -324,22 +340,57 @@ namespace Fishing_SharpDX
             float pitch = _input.GetMouseDeltaY() * 0.01f;
 
             _player.RotationBy(yaw, pitch);
+
+            if (_input.MouseState.Buttons[0])
+            {
+                if (!_isPressMouseButtonLeft)
+                {
+                    SpawnFloater();
+                }
+
+                _isPressMouseButtonLeft = true;
+            }
+            else
+                _isPressMouseButtonLeft = false;
+
+            if (_input.MouseState.Buttons[1])
+            {
+                if (!_isPressMouseButtonRight)
+                {
+                    if (_player.Fishingrod.IsFishing)
+                    {
+                        if(_fishing.Status == FishingStatus.Pecks)
+                        {
+                            _fish = _fishing.CaughtFish();
+                            _player.AddScore(_fish.GetScore());
+                            _isDrawCenterMessage = true;
+                            _player.Fishingrod.SetFish(_fish);
+                        }
+
+                        _player.Fishingrod.EndFishing();
+                        _fishing.EndFishing();
+                    }
+                }
+
+                _isPressMouseButtonRight = true;
+            }
+            else
+                _isPressMouseButtonRight = false;
         }
 
         public void RenderHUD()
         {
+            _hud.DrawAim();
             _hud.DrawScore(_player.Score);
-            if (_isDrawBitingCondition)
+
+            if (_fishing.IsFishing)
             {
-                if (_timeBitingConditionDuration > _timeBitingCondition)
+                _fishing.CatchingFish(_timeHelper.DeltaT);
+                _hud.DrawBitingCondition(_fishing.Status);
+
+                if (_player.Fishingrod.IsFishing && _fishing.Status == FishingStatus.GotOff)
                 {
-                    _hud.DrawBitingCondition(FishingStatus.Pecks);
-                    _timeBitingCondition += _timeHelper.DeltaT;
-                }
-                else
-                {
-                    _isDrawBitingCondition = false;
-                    _timeBitingCondition = 0;
+                    _player.Fishingrod.EndFishing();
                 }
             }
 
@@ -347,19 +398,38 @@ namespace Fishing_SharpDX
             {
                 if (_timeCenterMessageDuration > _timeCenterMessage)
                 {
-                    _hud.DrawCenterMessage(new Fish("Fish", _directX3DGraphics, _renderer, Vector4.Zero, null));
+                    _hud.DrawCenterMessage(_fish);
                     _timeCenterMessage += _timeHelper.DeltaT;
                 }
                 else
                 {
-                    _isDrawCenterMessage = false;
+                    _player.Fishingrod.ResetFish();
+                    _isDrawCenterMessage = false;     
                     _timeCenterMessage = 0;
                 }
             }
 
             if (_isDrawNotebook)
             {
-               _hud.DrawNotebook();
+                _hud.DrawNotebook();
+            }
+        }
+
+        private void SpawnFloater()
+        {
+            Vector2 center = new Vector2(_renderForm.Width / 2f, _renderForm.Height / 2f);
+            Vector3 rayCast = _player.Camera.GetRayCast(center);
+            Vector3 intersectionPoint = Vector3.Zero;
+            bool check = _water.IsRayCast((Vector3)_player.Camera.Position, rayCast, out intersectionPoint);
+            if (check)
+            {
+                float distance = Vector3.Distance((Vector3)_player.Position, intersectionPoint);
+                if (!_player.Fishingrod.IsFishing && distance < 20f)
+                {
+                    _player.Fishingrod.StartFishing((Vector4)intersectionPoint);
+                    _fishing.StartFishing();
+                }
+
             }
         }
 
