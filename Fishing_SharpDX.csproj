@@ -84,6 +84,7 @@
     <Compile Include="Objects\Fish.cs" />
     <Compile Include="Objects\Floater.cs" />
     <Compile Include="Objects\ObjectsStorage.cs" />
+    <Compile Include="Objects\Parsers\ObjParser.cs" />
     <Compile Include="Objects\Player\Fishingrod.cs" />
     <Compile Include="Objects\Player\Player.cs" />
     <Compile Include="Game.cs" />

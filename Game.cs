@@ -16,6 +16,7 @@ using Fishing_SharpDX.Objects.Player;
 using Plane = Fishing_SharpDX.Objects.Nature.Plane;
 using Fishing_SharpDX.Objects.Nature;
 using Fishing_SharpDX.Enums;
+using Fishing_SharpDX.Objects.Parsers;
 
 namespace Fishing_SharpDX
 {
@@ -33,8 +34,8 @@ namespace Fishing_SharpDX
         Floater _floater;
         Plane _ground;
         Plane _water;
-        Rock _rock1;
-        Tree _tree1;
+        MeshObject _rock1;
+        MeshObject _tree1;
 
         #endregion
 
@@ -107,9 +108,9 @@ namespace Fishing_SharpDX
             /*_camera = new Camera(new Vector4(0.0f, 0.0f, 0.0f, 1.0f));*/
 
             _directionalLight = new LightSource();
-            _directionalLight.Color = new Vector4(0f, 1f, 1f, 1f);
-            _directionalLight.Direction = new Vector4(0f, -1f, 0f, 1f);
-            _directionalLight.Position = new Vector4(0f, 2f, 0f, 1f);
+            _directionalLight.Color = new Vector4(1f, 1f, 1f, 1f);
+            _directionalLight.Direction = new Vector4(0f, -1f, -1f, 1f);
+            _directionalLight.Position = new Vector4(0f, 200f, 200f, 1f);
             /*_directionalLight.SpotAngle = (float)Math.PI / 6.0f;*/
             _directionalLight.LightSourceType = (int)LightSource.LightType.DirectionalLight;
 
@@ -119,7 +120,7 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
-                32f, true, groundTex);
+                1f, true, groundTex);
             _ground = new Plane("Ground", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 0f, 1f), _groundMaterial, 10);
 
             Texture waterTex = LoadTextureFromFile("Textures/water.jpg", _renderer.AnisotropicSampler);
@@ -129,7 +130,10 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, true, waterTex);
-            _water = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 20f, 1f), _waterMaterial, 10);
+            _water = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 110f, 1f), _waterMaterial, 100);
+            var _water1 = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(110f, 0f, 0f, 1f), _waterMaterial, 100);
+            var _water2 = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(-110f, 0f, 0f, 1f), _waterMaterial, 100);
+            var _water3 = new Plane("Water", _directX3DGraphics, _renderer, new Vector4(0f, 0f, -110f, 1f), _waterMaterial, 100);
 
             _rockMaterial = new Material("RockMaterial",
                 new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -137,7 +141,12 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
-            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(-5, 0.25f, 0, 1), _rockMaterial);
+            _rock1 = ObjParser.CreateObject("Rock1", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-5f, 0f, 1f, 1f), 0f, 0f, 0f);//new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(-5, 0.25f, 0, 1), _rockMaterial);
+            var _rock2 = ObjParser.CreateObject("Rock2", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-5f, 0f, 5f, 1f), 0f, 0f, 0f);
+            var _rock3 = ObjParser.CreateObject("Rock3", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(7f, 0f, -3f, 1f), 0f, 0f, 0f);
+            var _rock4 = ObjParser.CreateObject("Rock4", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0f, 0f, 2f, 1f), 0f, 0f, 0f);
+            var _rock5 = ObjParser.CreateObject("Rock5", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(3f, 0f, -1f, 1f), 0f, 0f, 0f);
+            var _rock6 = ObjParser.CreateObject("Rock6", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(4f, 0f, -10f, 1f), 0f, 0f, 0f);
 
             _treeMaterial = new Material("TreeMaterial",
                 new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -145,20 +154,65 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
-            _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
+            _tree1 = ObjParser.CreateObject("Tree1", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(5f, 0f, 1f, 1f), 0f, 0f, 0f);
+            var _tree2 = ObjParser.CreateObject("Tree2", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-8f, 0f, -5f, 1f), 0f, 0f, 0f);
+            var _tree3 = ObjParser.CreateObject("Tree3", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(2f, 0f, 1f, 1f), 0f, 0f, 0f);
+            var _tree4 = ObjParser.CreateObject("Tree4", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0f, 0f, -4f, 1f), 0f, 0f, 0f);
+            var _tree5 = ObjParser.CreateObject("Tree5", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(6f, 0f, 5f, 1f), 0f, 0f, 0f);
+            var _tree6 = ObjParser.CreateObject("Tree6", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-7f, 0f, 0f, 1f), 0f, 0f, 0f);
+            
+            var zabor1 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, 0f, 1f), 0f, 0f, 0f);
+            zabor1.YawBy(3.14f / 2f);
+            var zabor2 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, -2 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor2.YawBy(3.14f / 2f);
+            var zabor3 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, -6 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor3.YawBy(3.14f / 2f);
+            var zabor4 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, -4 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor4.YawBy(3.14f / 2f);
+            var zabor5 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, -8 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor5.YawBy(3.14f / 2f);
+            var zabor6 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, 2 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor6.YawBy(3.14f / 2f);
+            var zabor7 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, 4 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor7.YawBy(3.14f / 2f);
+            var zabor8 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, 6 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor8.YawBy(3.14f / 2f);
+            var zabor9 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-10f, 0f, 8 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor9.YawBy(3.14f / 2f);
 
-            Texture floaterTex = LoadTextureFromFile("Textures/floater.jpg", _renderer.AnisotropicSampler);
-            _floaterMaterial = new Material("FloaterMaterial",
-                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-                new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
-                new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
-                32f, true, floaterTex);
+            var zabor11 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, 0f, 1f), 0f, 0f, 0f);
+            zabor11.YawBy(3.14f / 2f);
+            var zabor21 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, -2 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor21.YawBy(3.14f / 2f);
+            var zabor31 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, -6 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor31.YawBy(3.14f / 2f);
+            var zabor41 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, -4 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor41.YawBy(3.14f / 2f);
+            var zabor51 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, -8 - 0.2f, 1f), 0f, 0f, 0f);
+            zabor51.YawBy(3.14f / 2f);
+            var zabor61 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, 2 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor61.YawBy(3.14f / 2f);
+            var zabor71 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, 4 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor71.YawBy(3.14f / 2f);
+            var zabor81 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, 6 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor81.YawBy(3.14f / 2f);
+            var zabor91 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(10f, 0f, 8 + 0.2f, 1f), 0f, 0f, 0f);
+            zabor91.YawBy(3.14f / 2f);
 
-            _floater = new Floater("Floater", _directX3DGraphics, _renderer, Vector4.Zero, _floaterMaterial);
-            _fishingrod = new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial, _floater);
+            var zabor111 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(1f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor211 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(3f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor311 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(5f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor411 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(7f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor511 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(9f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor611 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-9f, 0f,-10f, 1f), 0f, 0f, 0f);
+            var zabor711 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-7f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor811 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-5f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor911 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-3f, 0f, -10f, 1f), 0f, 0f, 0f);
+            var zabor9111 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-1f, 0f, -10f, 1f), 0f, 0f, 0f);
 
-            _fishingrod.PitchBy((float)Math.PI * 40 / 180);
+            _fishingrod = new Fishingrod(ObjParser.CreateObject("Fishingrod", "3D Objects and Textures/Fisingrod.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0.4f, 1.25f, 0f, 1f), 0f,0f,0f)); // new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
+            _fishingrod.YawBy((float)Math.PI * 90 / 180);
+            _fishingrod.RollBy((float)Math.PI * -40/ 180);
             _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)), _fishingrod);
 
             _illumination = new Illumination(_player.Camera.Position,
@@ -166,7 +220,10 @@ namespace Fishing_SharpDX
                                 new LightSource[] { _directionalLight }
                                 );
 
-            ObjectsStorage.AddObject(_ground, _water, _rock1, _tree1);
+            ObjectsStorage.AddObject(_ground,_water, _rock1, _tree1, _rock2, _rock3, _rock4, _rock5, _rock6, _tree2, _tree3, _tree4, _tree5, _tree6, _water1, _water2, _water3,
+                zabor1, zabor2, zabor3, zabor4, zabor5, zabor6, zabor7, zabor8, zabor9,
+                zabor11, zabor21, zabor31, zabor41, zabor51, zabor61, zabor71, zabor81, zabor91,
+                zabor111, zabor211, zabor311, zabor411, zabor511, zabor611, zabor711, zabor811, zabor911, zabor9111);
 
             _fish = null;
             Fish fish = new Fish("Karp", _directX3DGraphics, _renderer, Vector4.Zero, _floaterMaterial);
