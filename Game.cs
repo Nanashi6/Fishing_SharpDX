@@ -211,7 +211,16 @@ namespace Fishing_SharpDX
             var zabor911 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-3f, 0f, -10f, 1f), 0f, 0f, 0f);
             var zabor9111 = ObjParser.CreateObject("Zabor1", "3D Objects and Textures/Zabor.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-1f, 0f, -10f, 1f), 0f, 0f, 0f);
 
-            _fishingrod = new Fishingrod(ObjParser.CreateObject("Fishingrod", "3D Objects and Textures/Fisingrod.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0.4f, 1.25f, 0f, 1f), 0f,0f,0f)); // new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
+            Texture floaterTex = LoadTextureFromFile("Textures/floater.jpg", _renderer.AnisotropicSampler);
+            _floaterMaterial = new Material("FloaterMaterial",
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
+                new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
+                32f, true, floaterTex);
+
+            _floater = new Floater("Floater", _directX3DGraphics, _renderer, Vector4.Zero, _floaterMaterial);
+            _fishingrod = new Fishingrod(ObjParser.CreateObject("Fishingrod", "3D Objects and Textures/Fisingrod.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0.4f, 1.25f, 0f, 1f), 0f,0f,0f), _floater); // new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
             _fishingrod.YawBy((float)Math.PI * 90 / 180);
             _fishingrod.RollBy((float)Math.PI * -40/ 180);
             _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)), _fishingrod);
