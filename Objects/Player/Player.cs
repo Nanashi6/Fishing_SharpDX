@@ -12,7 +12,7 @@ namespace Fishing_SharpDX.Objects.Player
         private Camera _camera;
         private Fishingrod _fishingrod;
         private float _mass = 5f;
-        private float _actionRadius = 0.25f;
+        private float _actionRadius = 0.15f;
         private float _speed = 10f;
         private float _jumpForce = 0.0f;
         private float _gravityForce = 1f;
@@ -302,15 +302,14 @@ namespace Fishing_SharpDX.Objects.Player
             foreach(var obj in ObjectsStorage.Objects)
             {
                 if(Position.X >= obj.GetBoundingBox().Min.X - _actionRadius && Position.X <= obj.GetBoundingBox().Max.X + _actionRadius &&
-                    Position.Z >= obj.GetBoundingBox().Min.Z - _actionRadius && Position.Z <= obj.GetBoundingBox().Max.Z + _actionRadius &&
-                    Position.Y - (this.GetBoundingBox().Max.Y - this.GetBoundingBox().Min.Y) / 2 <= obj.Position.Y)
+                    Position.Z >= obj.GetBoundingBox().Min.Z - _actionRadius && Position.Z <= obj.GetBoundingBox().Max.Z + _actionRadius)
                 {
                     if (obj.Name == "Ground")
                     {
                         _isGround = true;
                         continue;
                     }
-                    /*Console.WriteLine(Position.ToString());*/
+                    Console.WriteLine(obj.Name + $"{obj.GetBoundingBox().ToString()}");
                     return true;
                 }
             }
