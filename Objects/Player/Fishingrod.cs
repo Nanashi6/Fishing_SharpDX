@@ -1,6 +1,14 @@
 ﻿using Fishing_SharpDX.Graphics;
+using Fishing_SharpDX.Helpers;
+using Fishing_SharpDX.Interface;
 using SharpDX;
+using SharpDX.Direct2D1.Effects;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Fishing_SharpDX.Objects.Player
 {
@@ -198,7 +206,13 @@ namespace Fishing_SharpDX.Objects.Player
                     4, 5, 6, 6, 7, 4,
                     16, 17, 18, 18, 19, 16
                 },
-                material)
+        material)
+        {
+        }
+        public Fishingrod(MeshObject meshObject, Floater floater) : base(meshObject.Name, meshObject.DirectX3DGraphics, meshObject.Renderer, meshObject.Position,
+                meshObject.Vertices,
+                meshObject.Indexes,
+                meshObject.Material)
         {
             _floater = floater;
         }

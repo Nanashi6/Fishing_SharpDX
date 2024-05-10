@@ -163,7 +163,7 @@ namespace Fishing_SharpDX.Graphics
             // Rasterizer state description.
             _rasterizerStateDescription = RasterizerStateDescription.Default();
             _rasterizerStateDescription.FillMode = _renderMode == RenderModes.Solid ? FillMode.Solid : FillMode.Wireframe;
-            _rasterizerStateDescription.CullMode = CullMode.Back;
+            _rasterizerStateDescription.CullMode = CullMode.None;
             _rasterizerStateDescription.IsFrontCounterClockwise = true;
             _rasterizerStateDescription.IsMultisampleEnabled = true;
             _rasterizerStateDescription.IsAntialiasedLineEnabled = true;

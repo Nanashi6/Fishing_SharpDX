@@ -62,6 +62,15 @@ namespace Fishing_SharpDX.Objects
 
         private Material _material;
         public Material Material { get => _material; set => _material = value; }
+        public DirectX3DGraphics DirectX3DGraphics { get => _directX3DGraphics;}
+        public Renderer Renderer { get => _renderer;}
+        public int VerticesCount { get => _verticesCount; }
+        public VertexDataStruct[] Vertices { get => _vertices; }
+        public Buffer11 VertexBufferObject { get => _vertexBufferObject; }
+        public VertexBufferBinding VertexBufferBinding { get => _vertexBufferBinding; }
+        public int IndexesCount { get => _indexesCount; }
+        public uint[] Indexes { get => _indexes; }
+        public Buffer11 IndexBufferObject { get => _indexBufferObject; }
 
         public MeshObject(string name, DirectX3DGraphics directX3DGraphics, Renderer renderer,
                         Vector4 initialPosition,
