@@ -12,8 +12,8 @@ namespace Fishing_SharpDX.Objects.Player
         private Camera _camera;
         private Fishingrod _fishingrod;
         private float _mass = 5f;
+        private float _speed = 6f;
         private float _actionRadius = 0.15f;
-        private float _speed = 10f;
         private float _jumpForce = 0.0f;
         private float _gravityForce = 1f;
         private bool _isGround = true;

@@ -24,6 +24,7 @@ namespace Fishing_SharpDX
     {
         RenderForm _renderForm;
         DirectX3DGraphics _directX3DGraphics;
+        SoundsController _sounds;
         Fishing _fishing;
 
         #region Objects
@@ -233,6 +234,9 @@ namespace Fishing_SharpDX
 
             _directX2DGraphics = new DirectX2DGraphics(_directX3DGraphics);
             _hud = new HUD(_directX2DGraphics);
+
+            _sounds = new SoundsController(0.1f, 0.2f);
+            _sounds.Music();
         }
 
         private void RenderLoopCallback()
@@ -242,6 +246,12 @@ namespace Fishing_SharpDX
                 RenderFormResizedCallback(this, EventArgs.Empty);
                 _firstRun = false;
             }
+
+            if (_sounds.GetMusicRepeat())
+            {
+                _sounds.Music();
+            }
+
             _timeHelper.Update();
             _renderForm.Text = "FPS: " + _timeHelper.FPS.ToString();
             //test
@@ -276,6 +286,7 @@ namespace Fishing_SharpDX
                 {
                     _player.Fishingrod.EndFishing();
                     _fishing.EndFishing();
+                    _sounds.FloaterOff();
                 }
             }
 
@@ -331,6 +342,11 @@ namespace Fishing_SharpDX
             else
                 _isPressI = false;
 
+            if(direction.X != 0 || direction.Y != 0 || direction.Z != 0)
+            {
+                _sounds.Step(_timeHelper.DeltaT);
+            }
+
             _player.MoveBy(direction.X * _timeHelper.DeltaT, direction.Y * _timeHelper.DeltaT, direction.Z * _timeHelper.DeltaT);
         }
 
@@ -369,6 +385,7 @@ namespace Fishing_SharpDX
 
                         _player.Fishingrod.EndFishing();
                         _fishing.EndFishing();
+                        _sounds.FloaterOff();
                     }
                 }
 
@@ -428,6 +445,7 @@ namespace Fishing_SharpDX
                 {
                     _player.Fishingrod.StartFishing((Vector4)intersectionPoint);
                     _fishing.StartFishing();
+                    _sounds.FloaterOn();
                 }
 
             }
