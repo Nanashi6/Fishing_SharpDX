@@ -205,7 +205,8 @@ namespace Fishing_SharpDX.Objects.Player
 
         public Fish EndFishing()
         {
-            return new Fish();
+            return null;
+            //return new Fish();
         }
 
         public void RotateAroundPosition(Vector4 position, float yaw)

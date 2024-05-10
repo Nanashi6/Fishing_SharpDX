@@ -7,6 +7,8 @@ namespace Fishing_SharpDX.Objects.Player
 {
     public class Player : MeshObject
     {
+        private int _score;
+        public int Score { get { return _score; } set { _score = value;  } }
         private Camera _camera;
         private Fishingrod _fishingrod;
         private float _mass = 5f;

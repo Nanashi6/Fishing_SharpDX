@@ -191,11 +191,6 @@ namespace Fishing_SharpDX
 
             ObjectsStorage.Render(viewMatrix, projectionMatrix);
             _player.Render(viewMatrix, projectionMatrix);
-            /*_ground.Render(viewMatrix, projectionMatrix);
-            _water.Render(viewMatrix, projectionMatrix);
-
-            _rock1.Render(viewMatrix, projectionMatrix);
-            _tree1.Render(viewMatrix, projectionMatrix);
 
             RenderHUD();
 
