@@ -127,7 +127,8 @@ namespace Fishing_SharpDX
                 32f, false, waterTex);
             _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
 
-            _fishingrod = new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.5f, 0.0f), _rockMaterial);
+            _fishingrod = new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
+            _fishingrod.PitchBy((float)Math.PI * 40/ 180);
             _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)), _fishingrod);
 
             _illumination = new Illumination(_player.Camera.Position,

@@ -1,4 +1,5 @@
 ﻿using Fishing_SharpDX.Graphics;
+using Fishing_SharpDX.Helpers;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -209,10 +210,15 @@ namespace Fishing_SharpDX.Objects.Player
 
         public void RotateAroundPosition(Vector4 position, float yaw)
         {
-            float newLocalX = (float)(Position.X * Math.Cos(yaw) - Position.Z * Math.Sin(yaw));
-            float newLocalZ = (float)(Position.X * Math.Sin(yaw) + Position.Z * Math.Cos(yaw));
+            yaw *= -1;
+            float newLocalX = position.X + (float)((Position.X - position.X) * Math.Cos(yaw) - (Position.Z - position.Z) * Math.Sin(yaw));
+            float newLocalZ = position.Z + (float)((Position.X - position.X) * Math.Sin(yaw) + (Position.Z - position.Z) * Math.Cos(yaw));
 
-            YawBy(yaw);
+            // Console.WriteLine(Math.Sqrt(Math.Pow(newLocalX, 2) + Math.Pow(newLocalZ, 2)));
+
+            MoveTo(newLocalX, Position.Y, newLocalZ);
+
+            YawBy(yaw*-1);
         }
     }
 }
