@@ -13,6 +13,11 @@ namespace Fishing_SharpDX.Objects
     {
         public Vector3 Min;
         public Vector3 Max;
+
+        public override string ToString()
+        {
+            return $"Min: {Min.ToString()}, Max: {Max.ToString()}";
+        }
     }
 
     public class MeshObject : PositionalObject, IDisposable
@@ -119,15 +124,16 @@ namespace Fishing_SharpDX.Objects
             // Проход по всем объектам в списке и сравнение координат
             foreach (var vertex in _vertices)
             {
+                Vector4 vPos = vertex.position + Position;
                 // Нахождение максимальных координат
-                maxX = Math.Max(maxX, vertex.position.X);
-                maxY = Math.Max(maxY, vertex.position.Y);
-                maxZ = Math.Max(maxZ, vertex.position.Z);
+                maxX = Math.Max(maxX, vPos.X);
+                maxY = Math.Max(maxY, vPos.Y);
+                maxZ = Math.Max(maxZ, vPos.Z);
 
                 // Нахождение минимальных координат
-                minX = Math.Min(minX, vertex.position.X);
-                minY = Math.Min(minY, vertex.position.Y);
-                minZ = Math.Min(minZ, vertex.position.Z);
+                minX = Math.Min(minX, vPos.X);
+                minY = Math.Min(minY, vPos.Y);
+                minZ = Math.Min(minZ, vPos.Z);
             }
 
             // Вывод результатов

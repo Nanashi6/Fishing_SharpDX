@@ -61,11 +61,25 @@ namespace Fishing_SharpDX.Objects
             _position.Z += deltaZ;
         }
 
+        public void MoveBy(Vector3 deltaDirection)
+        {
+            _position.X += deltaDirection.X;
+            _position.Y += deltaDirection.Y;
+            _position.Z += deltaDirection.Z;
+        }
+
         public virtual void MoveTo(float x, float y, float z)
         {
             _position.X = x;
             _position.Y = y;
             _position.Z = z;
+        }
+
+        public void MoveTo(Vector3 newPosition)
+        {
+            _position.X = newPosition.X;
+            _position.Y = newPosition.Y;
+            _position.Z = newPosition.Z;
         }
 
         public void Translate(Vector4 translation)
