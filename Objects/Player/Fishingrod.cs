@@ -1,12 +1,6 @@
 ﻿using Fishing_SharpDX.Graphics;
-using Fishing_SharpDX.Helpers;
 using SharpDX;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Fishing_SharpDX.Objects.Player
 {
@@ -17,8 +11,12 @@ namespace Fishing_SharpDX.Objects.Player
 
         private Floater _floater;
         public Floater Floater {  get { return _floater; } }
+
+        private Fish _fish;
+        public Fish Fish { get { return _fish; } }
+
         public Fishingrod(string name, DirectX3DGraphics directX3DGraphics, Renderer renderer,
-            Vector4 initialPosition, Material material, Floater floater,float scale = 0.1f)
+            Vector4 initialPosition, Material material, Floater floater, float scale = 0.1f)
             : base(name, directX3DGraphics, renderer, initialPosition,
                 new MeshObject.VertexDataStruct[24]
                 {
@@ -205,32 +203,30 @@ namespace Fishing_SharpDX.Objects.Player
             _floater = floater;
         }
 
-        public bool StartFishing(Vector4 posiiton)
+        public void StartFishing(Vector4 posiiton)
         {
             if(!_isFishing)
             {
                 _isFishing = true;
+                _fish = null;
                 _floater.SetPosition(posiiton);
-                return true;
             }
-
-            return false;
         }
 
-        public Fish EndFishing()
-        {
-            if (_isFishing)
-            {
-                _isFishing = false;
-                return null;
-            }
-            return null;
-            //return new Fish();
-        }
-
-        public void ResetFishing()
+        public void EndFishing()
         {
             _isFishing = false;
+        }
+
+        public void SetFish(Fish fish)
+        {
+            _fish = fish;
+            _fish.MoveTo(Position.X, Position.Y, Position.Z);
+        }
+
+        public void ResetFish()
+        {
+            _fish = null;
         }
 
         public void RotateAroundPosition(Vector4 position, float yaw)
@@ -239,11 +235,13 @@ namespace Fishing_SharpDX.Objects.Player
             float newLocalX = position.X + (float)((Position.X - position.X) * Math.Cos(yaw) - (Position.Z - position.Z) * Math.Sin(yaw));
             float newLocalZ = position.Z + (float)((Position.X - position.X) * Math.Sin(yaw) + (Position.Z - position.Z) * Math.Cos(yaw));
 
-            // Console.WriteLine(Math.Sqrt(Math.Pow(newLocalX, 2) + Math.Pow(newLocalZ, 2)));
-
             MoveTo(newLocalX, Position.Y, newLocalZ);
-
             YawBy(yaw * -1);
+
+            if(_fish != null)
+            {
+                _fish.YawBy(yaw * -1);
+            }
         }
 
         public override void Render(Matrix viewMatrix, Matrix projectionMatrix)
@@ -253,6 +251,15 @@ namespace Fishing_SharpDX.Objects.Player
             if (_isFishing)
             {
                 _floater.Render(viewMatrix, projectionMatrix);
+            }
+
+            if(_fish != null)
+            {
+                Matrix rotation = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll);
+                Vector3 vec = Vector3.TransformNormal(Vector3.UnitZ, rotation);
+
+                _fish.MoveTo(Position.X + vec.X * 3f, Position.Y + 1f, Position.Z + vec.Z * 3f);
+                _fish.Render(viewMatrix, projectionMatrix);
             }
         }
     }

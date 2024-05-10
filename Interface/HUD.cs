@@ -95,11 +95,11 @@ namespace Fishing_SharpDX.Interface
 
         public void DrawCenterMessage(Fish fish)
         {
-            RawRectangleF rect = new RawRectangleF(_width / 2 - 500, _height / 2 - 200, _width / 2 + 500, _height / 2 + 200);
+            RawRectangleF rect = new RawRectangleF(_width / 2 - 500, _height / 3 - 200, _width / 2 + 500, _height / 3 + 200);
 
             _directX2DGraphics.BeginDraw();
             //_directX2DGraphics.DrawRectangle(rect, _brushRed);
-            _directX2DGraphics.DrawText(fish.ToString(), _textCenter, rect, _brushGreen);
+            _directX2DGraphics.DrawText(fish.ToString(), _textCenter, rect, _brushWhite);
             _directX2DGraphics.EndDraw();
         }
 
