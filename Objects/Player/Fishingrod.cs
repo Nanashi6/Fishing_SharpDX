@@ -6,13 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Fishing_SharpDX.Objects.Player
 {
     public class Fishingrod : MeshObject
     {
+        private bool _isFishing = false;
+        public bool IsFishing { get => _isFishing; }
+
+        private Floater _floater;
+        public Floater Floater {  get { return _floater; } }
         public Fishingrod(string name, DirectX3DGraphics directX3DGraphics, Renderer renderer,
-            Vector4 initialPosition, Material material, float scale = 0.1f) 
+            Vector4 initialPosition, Material material, Floater floater,float scale = 0.1f)
             : base(name, directX3DGraphics, renderer, initialPosition,
                 new MeshObject.VertexDataStruct[24]
                 {
@@ -193,20 +199,38 @@ namespace Fishing_SharpDX.Objects.Player
                     0, 1, 2, 2, 3, 0,
                     4, 5, 6, 6, 7, 4,
                     16, 17, 18, 18, 19, 16
-                }, 
+                },
                 material)
         {
+            _floater = floater;
         }
 
-        public bool StartFishing()
+        public bool StartFishing(Vector4 posiiton)
         {
+            if(!_isFishing)
+            {
+                _isFishing = true;
+                _floater.SetPosition(posiiton);
+                return true;
+            }
+
             return false;
         }
 
         public Fish EndFishing()
         {
+            if (_isFishing)
+            {
+                _isFishing = false;
+                return null;
+            }
             return null;
             //return new Fish();
+        }
+
+        public void ResetFishing()
+        {
+            _isFishing = false;
         }
 
         public void RotateAroundPosition(Vector4 position, float yaw)
@@ -219,7 +243,17 @@ namespace Fishing_SharpDX.Objects.Player
 
             MoveTo(newLocalX, Position.Y, newLocalZ);
 
-            YawBy(yaw*-1);
+            YawBy(yaw * -1);
+        }
+
+        public override void Render(Matrix viewMatrix, Matrix projectionMatrix)
+        {
+            base.Render(viewMatrix, projectionMatrix);
+
+            if (_isFishing)
+            {
+                _floater.Render(viewMatrix, projectionMatrix);
+            }
         }
     }
 }
