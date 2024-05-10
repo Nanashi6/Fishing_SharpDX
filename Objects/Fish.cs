@@ -203,6 +203,14 @@ namespace Fishing_SharpDX.Objects
             RandomState();
         }
 
+        public Fish(MeshObject meshObject) : base(meshObject.Name, meshObject.DirectX3DGraphics, meshObject.Renderer, meshObject.Position,
+                meshObject.Vertices,
+                meshObject.Indexes,
+                meshObject.Material)
+        {
+            RandomState();
+        }
+
         public void RandomState()
         {
             Random random = new Random();

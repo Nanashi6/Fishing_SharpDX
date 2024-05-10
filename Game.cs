@@ -236,7 +236,7 @@ namespace Fishing_SharpDX
                 zabor111, zabor211, zabor311, zabor411, zabor511, zabor611, zabor711, zabor811, zabor911, zabor9111);
 
             _fish = null;
-            Fish fish = new Fish("Karp", _directX3DGraphics, _renderer, Vector4.Zero, _floaterMaterial);
+            Fish fish = new Fish(ObjParser.CreateObject("Fish", "3D Objects and Textures/fish.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0f, 0f, 0f, 1f), 0f, 0f, 0f));//new Fish("Karp", _directX3DGraphics, _renderer, Vector4.One, _floaterMaterial);
             _fishing = new Fishing(fish);
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
