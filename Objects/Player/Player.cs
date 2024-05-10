@@ -202,6 +202,7 @@ namespace Fishing_SharpDX.Objects.Player
                 },
             null)
         {
+            _score = 0;
             _camera = camera;
             _fishingrod = fishingrod;
         }
@@ -275,6 +276,11 @@ namespace Fishing_SharpDX.Objects.Player
             {
                 _camera.Pitch += pitch;
             }
+        }
+
+        public void AddScore(int score)
+        {
+            _score += score;
         }
 
         public Vector3 GetPlayerPositionUpDown()

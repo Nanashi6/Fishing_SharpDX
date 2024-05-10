@@ -15,6 +15,7 @@ using SharpDX.DXGI;
 using Fishing_SharpDX.Objects.Player;
 using Plane = Fishing_SharpDX.Objects.Nature.Plane;
 using Fishing_SharpDX.Objects.Nature;
+using Fishing_SharpDX.Enums;
 
 namespace Fishing_SharpDX
 {
@@ -60,6 +61,7 @@ namespace Fishing_SharpDX
         #region Interfaces
 
         DirectX2DGraphics _directX2DGraphics;
+        HUD _hud;
 
         #endregion
 
@@ -73,6 +75,17 @@ namespace Fishing_SharpDX
         Input _input;
 
         private bool _firstRun = true;
+
+        //hud
+        private bool _isPressI = false;
+        private bool _isDrawNotebook = false;
+
+        private bool _isDrawBitingCondition = false;
+        private bool _isDrawCenterMessage = false;
+        private float _timeBitingConditionDuration = 2.5f;
+        private float _timeCenterMessageDuration = 2.5f;
+        private float _timeBitingCondition = 0.0f;
+        private float _timeCenterMessage = 0.0f;
 
         public Game()
         {
@@ -142,6 +155,7 @@ namespace Fishing_SharpDX
             _timeHelper = new TimeHelper();
 
             _directX2DGraphics = new DirectX2DGraphics(_directX3DGraphics);
+            _hud = new HUD(_directX2DGraphics);
         }
 
         private void RenderLoopCallback()
@@ -181,13 +195,16 @@ namespace Fishing_SharpDX
             _water.Render(viewMatrix, projectionMatrix);
 
             _rock1.Render(viewMatrix, projectionMatrix);
-            _tree1.Render(viewMatrix, projectionMatrix);*/
+            _tree1.Render(viewMatrix, projectionMatrix);
+
+            RenderHUD();
 
             _renderer.EndRender();
         }
         public void RenderFormResizedCallback(object sender, EventArgs args)
         {
             _directX3DGraphics.Resize();
+            _hud.Resize(_renderForm.Height, _renderForm.Width);
             _player.Camera.Aspect = _renderForm.ClientSize.Width / (float)_renderForm.ClientSize.Height;
         }
 
@@ -215,11 +232,27 @@ namespace Fishing_SharpDX
             {
                 direction -= _player.GetPlayerPositionLeftRight();
             }
-            if(_input.IsKeyPressed(Key.Space))
+            if (_input.IsKeyPressed(Key.Space))
             {
                 _player.Jump();
             }
 
+            if (_input.IsKeyPressed(Key.I))
+            {
+                if (!_isPressI)
+                {
+                    _isDrawNotebook = !_isDrawNotebook;
+                }
+
+                _isPressI = true;
+            }
+            else
+                _isPressI = false;
+
+            if (_input.IsKeyPressed(Key.I))
+            {
+                _isDrawCenterMessage = true;
+            }
             _player.MoveBy(direction.X * _timeHelper.DeltaT, direction.Y * _timeHelper.DeltaT, direction.Z * _timeHelper.DeltaT);
         }
 
@@ -229,6 +262,43 @@ namespace Fishing_SharpDX
             float pitch = _input.GetMouseDeltaY() * 0.01f;
 
             _player.RotationBy(yaw, pitch);
+        }
+
+        public void RenderHUD()
+        {
+            _hud.DrawScore(_player.Score);
+            if (_isDrawBitingCondition)
+            {
+                if (_timeBitingConditionDuration > _timeBitingCondition)
+                {
+                    _hud.DrawBitingCondition(FishingStatus.Pecks);
+                    _timeBitingCondition += _timeHelper.DeltaT;
+                }
+                else
+                {
+                    _isDrawBitingCondition = false;
+                    _timeBitingCondition = 0;
+                }
+            }
+
+            if (_isDrawCenterMessage)
+            {
+                if (_timeCenterMessageDuration > _timeCenterMessage)
+                {
+                    _hud.DrawCenterMessage(new Fish("Fish", _directX3DGraphics, _renderer, Vector4.Zero, null));
+                    _timeCenterMessage += _timeHelper.DeltaT;
+                }
+                else
+                {
+                    _isDrawCenterMessage = false;
+                    _timeCenterMessage = 0;
+                }
+            }
+
+            if (_isDrawNotebook)
+            {
+               _hud.DrawNotebook();
+            }
         }
 
         public Texture LoadTextureFromFile(string fileName, SamplerState samplerState)

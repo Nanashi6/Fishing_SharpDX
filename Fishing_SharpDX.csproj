@@ -78,6 +78,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\FishingStatus.cs" />
+    <Compile Include="Interface\HUD.cs" />
+    <Compile Include="Objects\Fish.cs" />
     <Compile Include="Objects\Fish.cs" />
     <Compile Include="Objects\ObjectsStorage.cs" />
     <Compile Include="Objects\Player\Fishingrod.cs" />
