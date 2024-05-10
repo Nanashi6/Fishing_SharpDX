@@ -310,7 +310,7 @@ namespace Fishing_SharpDX.Objects.Player
                         _isGround = true;
                         continue;
                     }
-                    Console.WriteLine(obj.Name + $"{obj.GetBoundingBox().ToString()}");
+                    // Console.WriteLine(obj.Name + $"{obj.GetBoundingBox().ToString()}");
                     return true;
                 }
             }

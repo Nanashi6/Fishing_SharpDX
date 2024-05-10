@@ -269,6 +269,7 @@ namespace Fishing_SharpDX.Objects.Player
 
             if(_fish != null)
             {
+                Console.WriteLine(_fish.Position.ToString());
                 Matrix rotation = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll);
                 Vector3 vec = Vector3.TransformNormal(Vector3.UnitZ, rotation);
 
