@@ -16,6 +16,7 @@ using Fishing_SharpDX.Objects.Player;
 using Plane = Fishing_SharpDX.Objects.Nature.Plane;
 using Fishing_SharpDX.Objects.Nature;
 using Fishing_SharpDX.Enums;
+using Fishing_SharpDX.Objects.Parsers;
 
 namespace Fishing_SharpDX
 {
@@ -30,8 +31,8 @@ namespace Fishing_SharpDX
         Fishingrod _fishingrod;
         Plane _ground;
         Plane _water;
-        Rock _rock1;
-        Tree _tree1;
+        MeshObject _rock1;
+        MeshObject _tree1;
 
         #endregion
 
@@ -130,7 +131,12 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
-            _rock1 = new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(-5, 0.25f, 0, 1), _rockMaterial);
+            _rock1 = ObjParser.CreateObject("Rock1", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-5f, 0f, 1f, 1f), 0f, 0f, 0f);//new Rock("Rock1", _directX3DGraphics, _renderer, new Vector4(-5, 0.25f, 0, 1), _rockMaterial);
+            var _rock2 = ObjParser.CreateObject("Rock2", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-5f, 0f, 5f, 1f), 0f, 0f, 0f);
+            var _rock3 = ObjParser.CreateObject("Rock3", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(7f, 0f, -3f, 1f), 0f, 0f, 0f);
+            var _rock4 = ObjParser.CreateObject("Rock4", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0f, 0f, 2f, 1f), 0f, 0f, 0f);
+            var _rock5 = ObjParser.CreateObject("Rock5", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(3f, 0f, -1f, 1f), 0f, 0f, 0f);
+            var _rock6 = ObjParser.CreateObject("Rock6", "3D Objects and Textures/rock.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(4f, 0f, -10f, 1f), 0f, 0f, 0f);
 
             _treeMaterial = new Material("TreeMaterial",
                 new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -138,10 +144,16 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.5f, 1.0f),
                 32f, false, waterTex);
-            _tree1 = new Tree("Tree1", _directX3DGraphics, _renderer, new Vector4(1, 1f, 5, 1), _treeMaterial);
-
-            _fishingrod = new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
-            _fishingrod.PitchBy((float)Math.PI * 40/ 180);
+            _tree1 = ObjParser.CreateObject("Tree1", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(5f, 0f, 1f, 1f), 0f, 0f, 0f);
+            var _tree2 = ObjParser.CreateObject("Tree2", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-8f, 0f, -5f, 1f), 0f, 0f, 0f);
+            var _tree3 = ObjParser.CreateObject("Tree3", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(2f, 0f, 1f, 1f), 0f, 0f, 0f);
+            var _tree4 = ObjParser.CreateObject("Tree4", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0f, 0f, -4f, 1f), 0f, 0f, 0f);
+            var _tree5 = ObjParser.CreateObject("Tree5", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(6f, 0f, 5f, 1f), 0f, 0f, 0f);
+            var _tree6 = ObjParser.CreateObject("Tree6", "3D Objects and Textures/Tree.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(-7f, 0f, 0f, 1f), 0f, 0f, 0f);
+            
+            _fishingrod = new Fishingrod(ObjParser.CreateObject("Fishingrod", "3D Objects and Textures/Fisingrod.obj", _directX3DGraphics, _renderer, _renderer.AnisotropicSampler, new Vector4(0.4f, 1.25f, 0f, 1f), 0f,0f,0f)); // new Fishingrod("Fisingrod", _directX3DGraphics, _renderer, new Vector4(0.4f, 0.91f, 0.0f, 0.0f), _rockMaterial);
+            _fishingrod.YawBy((float)Math.PI * 90 / 180);
+            _fishingrod.RollBy((float)Math.PI * -40/ 180);
             _player = new Player(_directX3DGraphics, _renderer, new Vector4(0.0f, 0.91f, 0.0f, 0.0f), new Camera(new Vector4(0.0f, 1.82f, 0.0f, 1.0f)), _fishingrod);
 
             _illumination = new Illumination(_player.Camera.Position,
@@ -149,7 +161,7 @@ namespace Fishing_SharpDX
                                 new LightSource[] { _directionalLight }
                                 );
 
-            ObjectsStorage.AddObject(_ground,_water, _rock1, _tree1);
+            ObjectsStorage.AddObject(_ground,_water, _rock1, _tree1, _rock2, _rock3, _rock4, _rock5, _rock6, _tree2, _tree3, _tree4, _tree5, _tree6);
 
             _input = new Input(_renderForm.Handle);
             _timeHelper = new TimeHelper();
