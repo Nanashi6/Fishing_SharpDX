@@ -102,8 +102,8 @@ namespace Fishing_SharpDX
 
             _directionalLight = new LightSource();
             _directionalLight.Color = new Vector4(1f, 1f, 1f, 1f);
-            _directionalLight.Direction = new Vector4(0f, -1f, 0f, 1f);
-            _directionalLight.Position = new Vector4(0f, 2f, 0f, 1f);
+            _directionalLight.Direction = new Vector4(0f, -1f, -1f, 1f);
+            _directionalLight.Position = new Vector4(0f, 200f, 200f, 1f);
             /*_directionalLight.SpotAngle = (float)Math.PI / 6.0f;*/
             _directionalLight.LightSourceType = (int)LightSource.LightType.DirectionalLight;
 
@@ -113,7 +113,7 @@ namespace Fishing_SharpDX
                 new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
                 new Vector4(0.07568f, 0.61424f, 0.07568f, 1.0f),
-                32f, true, groundTex);
+                1f, true, groundTex);
             _ground = new Plane("Ground", _directX3DGraphics, _renderer, new Vector4(0f, 0f, 0f, 1f), _groundMaterial, 10);
 
             Texture waterTex = LoadTextureFromFile("Textures/water.jpg", _renderer.AnisotropicSampler);
