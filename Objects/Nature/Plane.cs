@@ -47,5 +47,67 @@ namespace Fishing_SharpDX.Objects.Nature
                   material)
         {
         }
+
+        public bool IsRayCast(Vector3 rayStart, Vector3 rayDirection, out Vector3 intersectionPoint)
+        {
+            BoundingBox boundingBox = GetBoundingBox();
+
+            float tMin = (boundingBox.Min.X - rayStart.X) / rayDirection.X;
+            float tMax = (boundingBox.Max.X - rayStart.X) / rayDirection.X;
+
+            if (tMin > tMax)
+            {
+                float temp = tMin;
+                tMin = tMax;
+                tMax = temp;
+            }
+
+            float tYMin = (boundingBox.Min.Y - rayStart.Y) / rayDirection.Y;
+            float tYMax = (boundingBox.Max.Y - rayStart.Y) / rayDirection.Y;
+
+            if (tYMin > tYMax)
+            {
+                float temp = tYMin;
+                tYMin = tYMax;
+                tYMax = temp;
+            }
+
+            if ((tMin > tYMax) || (tYMin > tMax))
+            {
+                intersectionPoint = Vector3.Zero;
+                return false;
+            }
+
+            if (tYMin > tMin)
+            {
+                tMin = tYMin;
+            }
+
+            if (tYMax < tMax)
+            {
+                tMax = tYMax;
+            }
+
+            float tZMin = (boundingBox.Min.Z - rayStart.Z) / rayDirection.Z;
+            float tZMax = (boundingBox.Max.Z - rayStart.Z) / rayDirection.Z;
+
+            if (tZMin > tZMax)
+            {
+                float temp = tZMin;
+                tZMin = tZMax;
+                tZMax = temp;
+            }
+
+            if ((tMin > tZMax) || (tZMin > tMax))
+            {
+                intersectionPoint = Vector3.Zero;
+                return false;
+            }
+
+            float t = Math.Max(tMin, Math.Max(tYMin, tZMin));
+            intersectionPoint = rayStart + rayDirection * t;
+
+            return true;
+        }
     }
 }

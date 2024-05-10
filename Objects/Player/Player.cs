@@ -20,6 +20,7 @@ namespace Fishing_SharpDX.Objects.Player
         private float _fallTime = 0.0f;
 
         public Camera Camera { get => _camera; }
+        public Fishingrod Fishingrod { get =>  _fishingrod; }
         public Player(DirectX3DGraphics directX3DGraphics, Renderer renderer, Vector4 position, Camera camera, Fishingrod fishingrod)
         : base("Player", directX3DGraphics, renderer, Vector4.Zero,
                new MeshObject.VertexDataStruct[24]
