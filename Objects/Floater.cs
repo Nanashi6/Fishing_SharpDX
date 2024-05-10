@@ -5,6 +5,8 @@ namespace Fishing_SharpDX.Objects
 {
     public class Floater : MeshObject
     {
+        private int _direction = -1;
+        private float _speed = 0.02f;
         public Floater(string name, DirectX3DGraphics directX3DGraphics, Renderer renderer,
             Vector4 initialPosition, Material material)
             : base(name, directX3DGraphics, renderer, initialPosition,
@@ -190,7 +192,23 @@ namespace Fishing_SharpDX.Objects
                 },
                 material)
         {
-            
+
+        }
+
+        public void Biting()
+        {
+            if(_direction < 0 && Position.Y < -0.5)
+            {
+                _direction *= -1;
+            }
+
+            if(_direction > 0 && Position.Y > 0)
+            {
+                _direction *= -1;
+            }
+
+            Vector3 direction = new Vector3(0, _speed * _direction, 0);
+            MoveBy(direction);
         }
 
         public void SetPosition(Vector4 position)

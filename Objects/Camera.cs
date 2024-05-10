@@ -39,6 +39,7 @@ namespace Fishing_SharpDX.Objects
             Matrix rotation = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll);
             return Vector3.TransformNormal(Vector3.UnitZ, rotation);
         }
+
         public Vector3 GetCameraPositionLeftRight()
         {
             Matrix rotation = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll);

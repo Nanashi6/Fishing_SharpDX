@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\FishingStatus.cs" />
+    <Compile Include="Fishing.cs" />
     <Compile Include="Interface\HUD.cs" />
     <Compile Include="Objects\Fish.cs" />
     <Compile Include="Objects\Floater.cs" />
