@@ -244,7 +244,7 @@ namespace Fishing_SharpDX
             _directX2DGraphics = new DirectX2DGraphics(_directX3DGraphics);
             _hud = new HUD(_directX2DGraphics);
 
-            _sounds = new SoundsController(0.1f, 0.2f);
+            _sounds = new SoundsController(0.1f, 0.4f);
             _sounds.Music();
         }
 
